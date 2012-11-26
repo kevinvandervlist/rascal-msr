@@ -5,7 +5,7 @@ import resource::versions::git::Git;
 
 import IO;
 
-str gitLoc = "/home/kevin/src/rascal-msr/";
+str gitLoc = "/home/kevin/src/rascal/";
 
 public void main() {
 	// Create a 'Connection' datatype.
@@ -27,9 +27,10 @@ public void main() {
 
 	// Get all CheckoutUnits of the current repo:	
 	cu = getCheckoutUnits(getRevisions(cs));
-	
+
+	// Check out all the revisions in succesion...	
 	for(c <- cu) {
-		res = checkoutResources(c, repo);
+		checkoutResources(c, repo);
 	}
 }
 
