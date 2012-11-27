@@ -3,9 +3,13 @@ module workingexperiments::git
 import resource::versions::Versions;
 import resource::versions::git::Git;
 
+import List;
+
+
+
 import IO;
 
-str gitLoc = "/home/kevin/src/rascal/";
+str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 
 public void main() {
 	// Create a 'Connection' datatype.
@@ -20,17 +24,31 @@ public void main() {
 	// Get all changesets of this git Repository
 	cs = getChangesets(repo);
 	
-	// Get all resources (e.g. files and folders, see resource.versions.Versions.rsc):
-	wcRes = getResources(repo);
-	// And create Resources of it:		
-	set[Resource resource] res = {r.resource | r <- wcRes};
-
-	// Get all CheckoutUnits of the current repo:	
-	cu = getCheckoutUnits(getRevisions(cs));
+	// Get all CheckoutUnits of the current repo:
+	revs = getRevisions(cs);
+	cu = getCheckoutUnits(revs);
 
 	// Check out all the revisions in succesion...	
+	println("Starting analyzing <size(cu)> CheckoutUnits...");
+	int x = 1;
 	for(c <- cu) {
+		println("CheckoutUnit <x>...");
+		x += 1;
+		
 		checkoutResources(c, repo);
+		
+		// Get all resources (e.g. files and folders, see resource.versions.Versions.rsc):
+		wcRes = getResources(repo);
+		// And create Resources of it:		
+		set[Resource resource] res = {r.resource | r <- wcRes};
+
+		for(r <- res) {
+			// Now r is a file resource of every java file in the current revision of the project
+			if(/\.java/ := "<r.id>") {
+				// Now r is a file resource of every java file in the current revision of the project
+  				iprintln("Match: <r.id>");
+			}
+		}
 	}
 }
 
