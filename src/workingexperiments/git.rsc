@@ -5,7 +5,7 @@ import resource::versions::git::Git;
 
 import List;
 
-
+import advtrack::LOC::FileLOC;
 
 import IO;
 
@@ -50,6 +50,9 @@ public void main() {
 			}
 		}
 	}
+	// Restore the state to the master branch
+	master = cunit(branch("master"));
+	checkoutResources(master, repo);
 }
 
 /**
