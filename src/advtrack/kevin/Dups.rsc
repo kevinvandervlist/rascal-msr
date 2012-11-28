@@ -7,9 +7,11 @@ import resource::versions::Versions;
 import resource::versions::git::Git;
 
 import advtrack::kevin::Git;
-import advtrack::kevin::datatypes;
+import advtrack::kevin::Filenames;
+import advtrack::Datatypes;
 
 import IO;
+import util::ValueUI;
 
 str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 
@@ -52,6 +54,19 @@ private dupdict stripSingles(dupdict d) {
 	return (k : d[k] | k <- d, size(d[k]) > 1);
 }
 
+private rel[location, str] createStringLocationList(dupdict dup) {
+	rel[location, str] ret = {};
+	for(d <- dup) {
+		ret += { < x, d> | x <- dup[d] };
+	}
+	return ret;
+}
+
+private void createBlockList(int block, int gap, dupdict dup) {
+	l = createStringLocationList(dup);
+	text(sort(l));
+}
+
 /**
  * Test main stuff.
  */
@@ -70,6 +85,10 @@ public void main() {
 	m = cunit(branch("master"));
 	fl = getFilesFromCheckoutUnit(m, repo);
 	
+	fl = stripFileExtension(".class", fl);
+	
 	dup_occurences = createLineMap(fl);
 	occurences = stripSingles(dup_occurences);
+	//text(occurences);
+	createBlockList(6, 3, occurences);
 }
