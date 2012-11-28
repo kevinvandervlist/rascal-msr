@@ -2,12 +2,14 @@ module advtrack::kevin::Dups
 
 import Set;
 import Map;
+import List;
 
 import resource::versions::Versions;
 import resource::versions::git::Git;
 
 import advtrack::kevin::Git;
 import advtrack::kevin::Filenames;
+import advtrack::kevin::Blocks;
 import advtrack::Datatypes;
 
 import IO;
@@ -54,17 +56,18 @@ private dupdict stripSingles(dupdict d) {
 	return (k : d[k] | k <- d, size(d[k]) > 1);
 }
 
-private rel[location, str] createStringLocationList(dupdict dup) {
-	rel[location, str] ret = {};
-	for(d <- dup) {
-		ret += { < x, d> | x <- dup[d] };
-	}
-	return ret;
-}
+/**
+ * Create a list with all the blocks that validate given contraints 
+ * @param block The _minimum_ size of a block in lines.
+ * @param gap The _maximum_ size of the gap between two elements to still be considered part of the same block.
+ * @return rel[location, str] with all <location, str> tuples 
+ */
 
-private void createBlockList(int block, int gap, dupdict dup) {
-	l = createStringLocationList(dup);
-	text(sort(l));
+private list[tuple[location, str]] createBlockList(int block, int gap, dupdict dup) {
+	l = createStringLocationRel(dup);
+	sorted_l = sort(l);
+	san_l = dropInvalidThreshold(block, gap, sorted_l);
+	return san_l;
 }
 
 /**
@@ -85,10 +88,11 @@ public void main() {
 	m = cunit(branch("master"));
 	fl = getFilesFromCheckoutUnit(m, repo);
 	
+	// Remove files that end with a class extension
 	fl = stripFileExtension(".class", fl);
 	
 	dup_occurences = createLineMap(fl);
 	occurences = stripSingles(dup_occurences);
 	//text(occurences);
-	createBlockList(6, 3, occurences);
+	text(createBlockList(6, 3, occurences));
 }
