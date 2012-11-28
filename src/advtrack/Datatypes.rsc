@@ -26,3 +26,5 @@ data CSxy = CSxy(set[CS] sections);
 
 // ?
 data CCCloneSections = CCCloneSections(map[CFxy fragments, CSxy sections] cccs);
+
+alias dupdict = map[str line, set[location] locs];

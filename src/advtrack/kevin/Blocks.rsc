@@ -1,5 +1,12 @@
 module advtrack::kevin::Blocks
 
+import List;
+import Set;
+
+import advtrack::Datatypes;
+
+alias dupdict = map[str line, set[location] locs];
+
 /**
  * Create a rel[location, string] from a dupdict.
  * So, a key with multiple locations results in a relation with the 

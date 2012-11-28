@@ -1,23 +1,21 @@
 module advtrack::kevin::Dups
 
-import Set;
-import Map;
 import List;
+import Map;
+import Set;
 
 import resource::versions::Versions;
 import resource::versions::git::Git;
 
-import advtrack::kevin::Git;
-import advtrack::kevin::Filenames;
-import advtrack::kevin::Blocks;
 import advtrack::Datatypes;
+import advtrack::kevin::Blocks;
+import advtrack::kevin::Filenames;
+import advtrack::kevin::Git;
 
 import IO;
 import util::ValueUI;
 
 str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
-
-alias dupdict = map[str line, set[location] locs];
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.
@@ -54,20 +52,6 @@ private dupdict createLineMap(list[loc] files) {
 
 private dupdict stripSingles(dupdict d) {
 	return (k : d[k] | k <- d, size(d[k]) > 1);
-}
-
-/**
- * Create a list with all the blocks that validate given contraints 
- * @param block The _minimum_ size of a block in lines.
- * @param gap The _maximum_ size of the gap between two elements to still be considered part of the same block.
- * @return rel[location, str] with all <location, str> tuples 
- */
-
-private list[tuple[location, str]] createBlockList(int block, int gap, dupdict dup) {
-	l = createStringLocationRel(dup);
-	sorted_l = sort(l);
-	san_l = dropInvalidThreshold(block, gap, sorted_l);
-	return san_l;
 }
 
 /**
