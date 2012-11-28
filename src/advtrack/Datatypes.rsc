@@ -28,6 +28,5 @@ data CSxy = CSxy(set[CS] sections);
 //Pair of clone fragments within a given clone class (CC)
 data CFxy = CFxy(CF x, CF y);
 
-// Output from the clone section detection process
 // Mapping of clone fragment pairs to their corresponding set of clone sections.
 data CCCloneSections = CCCloneSections(map[CFxy fragments, CSxy sections] cccs);
