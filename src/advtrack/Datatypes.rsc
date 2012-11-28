@@ -14,7 +14,7 @@ data CF = CF(loc file, list[codeline] lines);
 data CC = CC(list[CF] fragments);
 
 // a codeblock is a number of consecutive codelines in a clone fragment (CF).
-// Example: given CF with codelines [1,2,3,6,7], [1,2,3] and [6,7] are considered codeblocks
+// Example: given CF with codelines [1,2,3,6,7], then [1,2,3] and [6,7] are considered codeblocks
 data codeblock = codeblock(list[codeline] lines, int begin);
 
 // A clone section consists of two cloned codeblocks. 
