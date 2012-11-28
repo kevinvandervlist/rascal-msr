@@ -1,4 +1,4 @@
-module advtrack::kevin::datatypes
+module advtrack::Datatypes
 
 // location of a line from a source file
 data location = location(loc file, int line);
@@ -12,12 +12,17 @@ data CF = CF(loc file, list[codeline] lines);
 // Clone Class CC is a list of CFs
 data CC = CC(list[CF] fragments);
 
+// ?
 data CFxy = CFxy(CF x, CF y);
 
+// ?
 data codeblock = codeblock(list[codeline] lines, int begin);
 
+// ?
 data CS = CS(codeblock x, codeblock y);
 
+// ?
 data CSxy = CSxy(set[CS] sections);
 
+// ?
 data CCCloneSections = CCCloneSections(map[CFxy fragments, CSxy sections] cccs);
