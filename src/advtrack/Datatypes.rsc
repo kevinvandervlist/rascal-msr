@@ -5,7 +5,7 @@ module advtrack::Datatypes
 data location = location(loc file, int line);
 
 // A line of code and the location
-data codeline = codeline(str line, location linelocation);
+data codeline = codeline(location linelocation, str line);
 
 // Clone Fragment CF is a set of a codelines and their location
 data CF = CF(loc file, list[codeline] lines);

@@ -9,6 +9,7 @@ import resource::versions::git::Git;
 
 import advtrack::Datatypes;
 import advtrack::kevin::Blocks;
+import advtrack::kevin::CodeFragments;
 import advtrack::kevin::Filenames;
 import advtrack::kevin::Git;
 
@@ -78,5 +79,8 @@ public void main() {
 	dup_occurences = createLineMap(fl);
 	occurences = stripSingles(dup_occurences);
 	//text(occurences);
-	text(createBlockList(6, 3, occurences));
+	cl = createCodelines(6, 3, occurences);
+	text(cl);
+	//cfs = createCodeFragments(cl);
+	//text(cfs);
 }
