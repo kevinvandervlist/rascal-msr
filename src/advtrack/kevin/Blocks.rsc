@@ -17,11 +17,7 @@ alias dupdict = map[str line, set[location] locs];
  */
 
 private rel[location, str] createStringLocationRel(dupdict dup) {
-	rel[location, str] ret = {};
-	for(d <- dup) {
-		ret += { < x, d> | x <- dup[d] };
-	}
-	return ret;
+	return { < x, d> | d <- dup, x <- dup[d] };
 }
 
 /**
