@@ -66,15 +66,15 @@ private list[CF] dropInvalidThreshold(int block, int gap, list[tuple[location l,
 }
 
 /**
- * Create a list of codelines that validate given constraints.
+ * Create a list of CFs that validate given constraints.
+ * This is the first step.
  * @param block The _minimum_ size of a block in lines.
  * @param gap The _maximum_ size of the gap between two elements to 
  * still be considered part of the same block.
  * @return rel[location, str] with all <location, str> tuples 
  */
 
-public list[CF] createCodelines(int block, int gap, dupdict dup) {
+public list[CF] createFirstStepCodeFragments(int block, int gap, dupdict dup) {
 	l = createStringLocationRel(dup);
-	sl = dropInvalidThreshold(block, gap, sort(l));
-	return sl;
+	return dropInvalidThreshold(block, gap, sort(l));
 }

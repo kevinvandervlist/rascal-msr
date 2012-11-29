@@ -76,11 +76,13 @@ public void main() {
 	// Remove files that end with a class extension
 	fl = stripFileExtension(".class", fl);
 	
+	// Create a map with all duplicate occurences.
 	dup_occurences = createLineMap(fl);
+	
+	// Filter the strings that occur only once.
 	occurences = stripSingles(dup_occurences);
-	//text(occurences);
-	cl = createCodelines(6, 3, occurences);
+
+	// Create a list of code fragments for further analysis.
+	cl = createCodeFragments(6, 3, occurences);
 	text(cl);
-	//cfs = createCodeFragments(cl);
-	//text(cfs);
 }
