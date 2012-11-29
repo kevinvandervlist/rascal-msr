@@ -27,18 +27,16 @@ str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 
 private dupdict createLineMap(list[loc] files) {
 	dupdict ret = ();
+	
+	// Needed, see issue 32: https://github.com/cwi-swat/rascal/issues/32
+	set[location] init = {};
+	
 	for(f <- files) {
 		lines = readFileLines(f);
-	
 		int cnt = 0;
-		// TODO: Improve the following lines, it's ugly
+
 		for(l <- lines) {
-			t = location(f, cnt);
-			if(l in ret) {
-				ret[l] = ret[l] + {t};
-			} else {
-				ret[l] = {t};
-			}
+			ret[l]?init += { location(f, cnt) };
 			cnt += 1;
 		}
 	}
@@ -84,5 +82,5 @@ public void main() {
 
 	// Create a list of code fragments for further analysis.
 	cl = createCodeFragments(6, 3, occurences);
-	text(cl);
+	//text(cl);
 }
