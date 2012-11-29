@@ -1,3 +1,4 @@
+
 module advtrack::kevin::Blocks
 
 import List;
@@ -48,7 +49,7 @@ private list[CF] dropInvalidThreshold(int block, int gap, list[tuple[location l,
 		} else {
 			// Different file, reset counter stuff and possibly add to ret
 			if((buf != {}) && (block_size >= block)) {
-				ret += [CF(prev.file, [codeline(e.l, e.s) | e <- sort(buf)])];
+				ret += [CF(prev.file, [ e | el <- sort(buf), e := codeline(el.s)[@linelocation=el.l]])];
 			}
 			block_size = 0;
 			buf = {x};
@@ -59,7 +60,7 @@ private list[CF] dropInvalidThreshold(int block, int gap, list[tuple[location l,
 	
 	// Add the current buffer if it is still within constraint boundaries
 	if((buf != {}) && (block_size >= block)) {
-		ret += [CF(prev.file, [codeline(e.l, e.s) | e <- sort(buf)])];
+		ret += [CF(prev.file, [ e | el <- sort(buf), e := codeline(el.s)[@linelocation=el.l]])];
 	}
 
 	return ret;

@@ -6,9 +6,14 @@ import List;
 data location = location(loc file, int line);
 
 // A line of code and the location
-data codeline = codeline(location linelocation, str line);
+// The file location will be an annotation, because it will be very 
+// easy to compare CFs that way.
+data codeline = codeline(str line);
+anno location codeline @ linelocation;
 
 // Clone Fragment CF is a set of a codelines and their location
+// The file location will be an annotation, because it will be very 
+// easy to compare CFs that way.
 data CF = CF(loc file, list[codeline] lines);
 
 // Clone Class CC is a list of CFs
