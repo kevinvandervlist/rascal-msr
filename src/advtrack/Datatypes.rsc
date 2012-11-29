@@ -1,5 +1,6 @@
 module advtrack::Datatypes
 
+import List;
 
 // location of a line from a source file
 data location = location(loc file, int line);
@@ -30,3 +31,33 @@ data CFxy = CFxy(CF x, CF y);
 
 // Mapping of clone fragment pairs to their corresponding set of clone sections.
 data CCCloneSections = CCCloneSections(map[CFxy fragments, CSxy sections] cccs);
+
+/**
+ * Are two CFs equal?
+ * Note: This compares the lines, not the codes. 
+ * So, having CF a in file x, and CF b in file Y can be equal 
+ * if all the lines are equal. 
+ * @param a The first CF
+ * @param b The second CF
+ * @return Equal or not.
+ */
+
+public bool isEqualCF(CF a, CF b) {
+	cla = a.lines;
+	clb = b.lines;
+	
+	// Are they of the same length?
+	if(size(cla) != size(clb)) {
+		return false;
+	}
+	
+	// Compare all the elements.
+	cmp = zip(cla, clb);
+	for(<l, r> <- cmp) {
+		if(l.line != r.line) {
+			return false;
+		}
+	}
+	return true;
+}
+
