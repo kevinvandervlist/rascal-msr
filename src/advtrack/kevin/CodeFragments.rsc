@@ -12,11 +12,12 @@ import IO;
 public list[CF] createCodeFragments(int block, int gap, dupdict dup) {
 	// Step one: initial cf's.
 	cflist = createFirstStepCodeFragments(block, gap, dup);
+	
+	// Diff all lists with each other.
+	for(x <- cflist, y <- cflist) {
+		println("Diff: <x.lines - y.lines>");
+	} 
 	return cflist;
 }
 
-private list[CF] createInitialCFList(list[codeline] cl) {
-	//location(loc file, int line);
-	//codeline(str line, location linelocation);
-	//CF(loc file, list[codeline] lines);
-}
+
