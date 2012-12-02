@@ -12,6 +12,7 @@ import advtrack::kevin::Blocks;
 import advtrack::kevin::CodeFragments;
 import advtrack::kevin::Filenames;
 import advtrack::kevin::Git;
+import advtrack::kevin::lexer::Lexer;
 
 import IO;
 import util::ValueUI;
@@ -35,7 +36,8 @@ private dupdict createLineMap(list[loc] files) {
 		lines = readFileLines(f);
 		int cnt = 0;
 
-		for(l <- lines) {
+		for(rl <- lines) {
+			l = lexLine(rl);
 			ret[l]?init += { location(f, cnt) };
 			cnt += 1;
 		}
@@ -82,5 +84,5 @@ public void main() {
 
 	// Create a list of code fragments for further analysis.
 	cl = createCodeFragments(6, 3, occurences);
-	//text(cl);
+	text(cl);
 }
