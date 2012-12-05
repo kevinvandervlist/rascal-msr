@@ -17,6 +17,9 @@ public list[&T] shuffle(list[&T] l) =
 public list[str] get(int n) =
     slice(lipsum, 0, n);
 
+public list[str] get(int s, int n) =
+    slice(lipsum, s, n);
+
 public list[str] getShuffled(int n) =
     slice(shuffle(lipsum), 0, n);
 
