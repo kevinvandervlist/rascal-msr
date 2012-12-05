@@ -37,10 +37,23 @@ public class Lexer {
         Token token = lexer.nextToken();
         
         while(token.getType() != JavaLexer.EOF) {
-    		buf.append(token.getText());
-            token = lexer.nextToken();
+        	// TODO: RJ2
+        	if(token.getType() == JavaLexer.IDENTIFIER) {
+        		// Parameter replacement:
+        		buf.append("$p ");
+        	} else if(token.getType() == JavaLexer.PACKAGE) {
+        		// RJ1: remove package names
+        	} else if (	(token.getType() == JavaLexer.PUBLIC) ||
+        				(token.getType() == JavaLexer.PROTECTED) ||
+        				(token.getType() == JavaLexer.PRIVATE)) {
+        		// RJ2: remove accessibility keyword
+        	} else {
+        		// Other cases
+        		buf.append(token.getText());
+        		buf.append("");
+        	}
+        	token = lexer.nextToken();
         }
-        
         return buf.toString();
 	}
 }

@@ -21,14 +21,12 @@ public list[CF] createCodeFragments(int block, int gap, dupdict dup) {
 	
 	// List intersections
 	for(x <- cflist, y <- cflist) {
-		/*
 		i = x.lines & y.lines;
 		
 		match = toReal(size(i)) / toReal(size(x.lines)) * 100;
 		if((match > cmp) && (x != y)) {
 			pairs += {CFxy(x, y)};
 		} 
-		*/
 	}
 	
 	for(p <- pairs) {

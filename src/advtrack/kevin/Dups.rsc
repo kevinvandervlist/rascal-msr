@@ -38,6 +38,7 @@ private dupdict createLineMap(list[loc] files) {
 
 		for(rl <- lines) {
 			l = lexLine(rl);
+			println(l);
 			ret[l]?init += { location(f, cnt) };
 			cnt += 1;
 		}
