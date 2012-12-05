@@ -35,15 +35,11 @@ private list[CF] dropInvalidThreshold(int block, int gap, list[tuple[location l,
 	// Set the current file
 	location prev = head(lst).l;
 	int block_size = 0;
-	int cgap = gap;
 		
 	for(x <- lst) {
 		// Same file, in block threshold?
 		if(	(x.l.file == prev.file) &&
-			((prev.line + cgap) >= x.l.line)) {
-			if((prev.line + 1) != x.l.line) {
-				cgap -= 1;
-			}
+			((prev.line + gap) >= x.l.line)) {
 			block_size += 1;
 			buf += x;
 		} else {
@@ -53,7 +49,6 @@ private list[CF] dropInvalidThreshold(int block, int gap, list[tuple[location l,
 			}
 			block_size = 0;
 			buf = {x};
-			cgap = gap;
 		}
 		// Set the previous location.
 		prev = x.l;
