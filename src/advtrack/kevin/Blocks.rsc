@@ -1,8 +1,13 @@
 
 module advtrack::kevin::Blocks
 
+import advtrack::kevin::Dups;
+
 import List;
 import Set;
+import IO;
+import util::ValueUI;
+
 
 import advtrack::Datatypes;
 
@@ -75,3 +80,109 @@ public list[CF] createFirstStepCodeFragments(int block, int gap, dupdict dup) {
 	l = createStringLocationRel(dup);
 	return dropInvalidThreshold(block, gap, sort(l));
 }
+
+
+
+
+
+public list[CFxy] matchFragments(list[CF] cl) {
+	return [<cla, clb> | cla <- cl, clb <- cl, cla != clb, matchPair(cla, clb)];
+}
+
+
+
+
+private bool matchPair( CF a, CF b) {
+	
+	
+
+	
+	intersection = toSet(a.lines) & toSet(b.lines);
+	
+	if (a.file ==|file:///home/vladokom/workspace/uva/HelloWorldGitDemo/src/demo/Hello.java|)
+	if (b.file ==|file:///home/vladokom/workspace/uva/HelloWorldGitDemo/src/demo/CopyOfHello.java|)
+		text(sort(toList(intersection));
+		
+		
+		
+	if (size(intersection) < LINE_THRESHOLD) 
+		return false;
+	
+		
+	indexingA = [indexOf(a.lines, x) | x <- intersection];
+	indexingB = [indexOf(b.lines, x) | x <- intersection];
+		
+		
+	if (a.file ==|file:///home/vladokom/workspace/uva/HelloWorldGitDemo/src/demo/Hello.java|)
+	if (b.file ==|file:///home/vladokom/workspace/uva/HelloWorldGitDemo/src/demo/CopyOfHello.java|)
+		text(sort(indexingA));
+		
+	list[set[int]] bufferA = [{}];
+	list[set[int]] bufferB = [{}];
+	set[int] buf = {};
+	
+	sizeL = size(indexingA);
+	indexingAsorted = sort(indexingA);
+	indexingBsorted = sort(indexingB);
+			
+	for  (i <- [0..sizeL-2]) {
+		if (indexingAsorted[i+1] - indexingAsorted[i] > GAP_THRESHOLD) {  			
+			bufferA += buf;
+			buf = {};
+		}
+		else {
+			buf += {indexingAsorted[i+1], indexingAsorted[i]};
+		}
+	}
+		
+		
+	for  (i <- [0..sizeL-2]) {
+		if (indexingBsorted[i+1] - indexingBsorted[i] > GAP_THRESHOLD) {  			
+			bufferB += buf;
+			buf = {};
+		}
+		else {
+			buf += {indexingBsorted[i+1], indexingBsorted[i]};
+		}
+	}
+			
+		
+	bufferA = [ x | x <- bufferA, size(x) >= LINE_THRESHOLD];
+	bufferB = [ x | x <- bufferB, size(x) >= LINE_THRESHOLD];		
+		
+	if (size(bufferA) == 0 || size(bufferB) == 0)
+		return false;
+	
+	sectionsA = [  [a.lines[f] |  f <- sort(toList(x))]  | x <-bufferA];
+	sectionsB = [  [b.lines[f] |  f <- sort(toList(x))]  | x <-bufferB];
+		
+	list[codeline] prev = [];
+		
+		
+		
+	for (x <- sectionsA) {
+		for (y <- sectionsB) {
+			for ( [_*, X*, _*] := x) {
+				for ( [_*, Y*, _*] := y) {
+					if (X == Y &&  (size(X) >=  LINE_THRESHOLD)) {
+						if (!(prev < X)) {
+							println(X);
+						} 
+						prev = X;
+						
+					}
+				}
+			}
+		}
+	}
+			 
+	return true;
+}
+
+
+
+
+
+
+
+
