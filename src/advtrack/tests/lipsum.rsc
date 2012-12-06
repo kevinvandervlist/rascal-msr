@@ -19,18 +19,18 @@ public list[&T] shuffle(list[&T] l) =
     sort(l, bool(&T a, &T b) { return arbInt(2) == 1; });
 
 
-public list[str] get(int n) =
+public list[str] getLipsum(int n) =
     slice(lipsum, 0, n);
 
-public list[str] get(int s, int n) =
+public list[str] getLipsum(int s, int n) =
     slice(lipsum, s, n);
 
-public list[str] getNext(int n) {
+public list[str] getNextLipsum(int n) {
     slice(lipsum, lipsumCounter % size(lipsum), n);
     lipsumCounter += n;
 }
 
-public list[str] getShuffled(int n) =
+public list[str] getShuffledLipsum(int n) =
     slice(shuffle(lipsum), 0, n);
 
 
