@@ -6,11 +6,14 @@ import util::Math;
 import util::ValueUI;
 
 
-private loc lipsumFile = |file:///home/jimi/UvA/Master/EvolutionSeries2/lipsum|;
+private loc lipsumFile = |project://rascal-msr/lipsum|;
+
+//private loc lipsumFile = |file:///home/jimi/UvA/Master/EvolutionSeries2/lipsum|;
 private list[str] lipsum = readFileLines(lipsumFile);
 private int lipsumCounter = 0;
 
-private loc muspilFile = |file:///home/jimi/UvA/Master/EvolutionSeries2/muspil|;
+//private loc muspilFile = |file:///home/jimi/UvA/Master/EvolutionSeries2/muspil|;
+private loc muspilFile = |project://rascal-msr/muspil|;
 private list[str] muspil = readFileLines(muspilFile);
 private int muspilCounter = 0;
 

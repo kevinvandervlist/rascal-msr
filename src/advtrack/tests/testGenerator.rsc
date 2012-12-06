@@ -82,19 +82,11 @@ bool contains(list[CF] unique, CF frag){
 }
 
 
-//TODO: Jimi
-//CCCloneSections generateCCCS(){
-//}
-
-
 //TODO: Liam
-CC generateCC(CCCloneSections cccs){
+public CC generateCC(CCCloneSections cccs){
 	
-	//data CCCloneSections = CCCloneSections(map[CFxy fragments, CSxy sections] cccs);
-	//data CC = CC(list[CF] fragments);
-	//data CF = CF(loc file, list[codeline] lines);
-	
-	set[CFxy] pairs = domain(cccs); //get all CF fragment pairs
+	//set[CFxy] pairs = domain(cccs); //get all CF fragment pairs
+	list[CFxy] pairs = [cfcs.cf | cfcs <- cccs];
 	list[CF] unique = [];
 	
 	for(pair <- pairs){
@@ -107,13 +99,17 @@ CC generateCC(CCCloneSections cccs){
 		}
 	}
 	
+	text(unique);
 	return CC(unique);
 }
 
 
 ///TODO: Liam
-void generateFile(CC cc){
-	//output file
+public void generateFile(CC cc){
+
+	list[CF] fragments =  cc.fragments;
+	
+	
 }
 
  
