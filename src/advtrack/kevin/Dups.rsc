@@ -17,6 +17,12 @@ import advtrack::kevin::lexer::Lexer;
 import IO;
 import util::ValueUI;
 
+
+public int LINE_THRESHOLD = 6;
+public int GAP_THRESHOLD = 6;
+
+
+//str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
 str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 
 /**
@@ -36,13 +42,15 @@ private dupdict createLineMap(list[loc] files) {
 		lines = readFileLines(f);
 		int cnt = 0;
 
-		for(rl <- lines) {
-			l = lexLine(rl);
-			println(l);
+		for(l <- lines) {
+			//l = lexLine(rl);
+			//println(rl);
+
 			ret[l]?init += { location(f, cnt) };
 			cnt += 1;
 		}
 	}
+
 	return ret;
 }
 
@@ -84,6 +92,10 @@ public void main() {
 	occurences = stripSingles(dup_occurences);
 
 	// Create a list of code fragments for further analysis.
-	cl = createCodeFragments(6, 3, occurences);
-	text(cl);
+	cl = createCodeFragments(LINE_THRESHOLD, GAP_THRESHOLD, occurences);
+	
+//	text(cl);
+	clonePairs = matchFragments(cl);
+	
+
 }
