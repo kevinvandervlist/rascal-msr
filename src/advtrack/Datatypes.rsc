@@ -34,8 +34,14 @@ data CSxy = CSxy(set[CS] sections);
 //Pair of clone fragments within a given clone class (CC)
 data CFxy = CFxy(CF x, CF y);
 
+//Pair of pair of Clone Fragments (CFxy) and their clone sections (CSxy)
+data CFxyCSxy = CFxyCSxy(CFxy cf, CSxy cs);
+
 // Mapping of clone fragment pairs to their corresponding set of clone sections.
-alias CCCloneSections = map[CFxy fragments, CSxy sections];
+alias CCCloneSections = list[CFxyCSxy sections];
+
+//a file
+data File = File(loc filelocation, list[str] lines);
 
 /**
  * Are two CFs equal?
