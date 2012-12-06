@@ -31,6 +31,9 @@ public CF toCF(codeblock cb) =
 public CF toCF(list[codeblock] cbs) =
     CF(cbs[0].lines[0] @ linelocation.file, [l | cb <- cbs, l <- cb.lines]);
 
+public int size(CF cf) =
+    last(cf.lines) @ linelocation.line - head(cf.lines) @ linelocation.line;
+
 public codeblock moveCodeblock(codeblock b, int n) =
     codeblock(
         [ x |
@@ -45,6 +48,26 @@ public codeblock moveCodeblock(codeblock b, int n) =
         b.begin + n
     );
 
+public list[codeblock] moveCodeblocks(list[codeblock] blocks, int n) =
+    [moveCodeblock(b, n) | b <- blocks];
+
+public list[codeblock] moveCodeblocksGapped(list[codeblock] blocks, int n) {
+    newBlocks = [];
+    offset = 0;
+    for(i <- [0 .. size(blocks) - 1]) {
+        b = blocks[i];
+        currGap = 0;
+        println(b);
+        if(i > 0)
+            currGap = head(b.lines) @ linelocation.line -
+                last(blocks[i - 1].lines) @ linelocation.line;
+
+        newBlocks += moveCodeblock(b, n + offset);
+        offset += randInt(1, GAP_SIZE) - currGap;
+    }
+    return newBlocks;
+}
+
 public list[codeblock] splitCodeblock(codeblock b, int pos, int gap) =
     [
         codeblock(take(pos, b.lines), b.begin),
@@ -52,22 +75,38 @@ public list[codeblock] splitCodeblock(codeblock b, int pos, int gap) =
     ];
 
 public list[codeblock] randSplitCodeblock(codeblock b) =
-    splitCodeblock(b, randInt(1, size(b.lines) - 1), randInt(1, GAP_SIZE));
+    splitCodeblock(b, randInt(1, size(b.lines) - 2), randInt(0, GAP_SIZE));
+
+public list[codeblock] splitCodeblocks(list[codeblock] cbs, int pos, int gap) {
+    largest = largestCodeblock(cbs);
+    return cbs - largest + splitCodeblock(largest, pos, gap);
+}
+
+public codeblock largestCodeblock(list[codeblock] cbs) =
+    sort(cbs, bool(codeblock b1, codeblock b2){ return size(b1.lines) > size(b2.lines); })[0];
 
 
 public CCCloneSections generateCCCS() {
     cccs = [];
-    orig = toCodeblock(getLipsum(randInt(6, 10)), tmpFile, 0);
-    for(i <- [0 .. 1]) {
-        copy = moveCodeblock(orig, randInt(BLOCK_SIZE, 12) + size(orig.lines));
+
+    lipsumSize =6; //randInt(6, 10);
+    orig = [toCodeblock(getLipsum(lipsumSize), tmpFile, 0)];
+    copy = [moveCodeblock(head(orig), /*randInt(BLOCK_SIZE, 12)*/6 + lipsumSize)];
+
+    for(i <- [0 .. 3]) {
         cfx = toCF(orig);
         cfy = toCF(copy);
-        csxy = CSxy({CS(orig, copy)});
+        
+        csxy = CSxy({ CS(orig[j], copy[j]) | j <- [0 .. size(orig) - 1] });
         cfxy = CFxy(cfx, cfy);
         cccs += CFxyCSxy(cfxy, csxy);
-        orig = copy;
+
+        splitAt = randInt(1, size(largestCodeblock(copy).lines) - 1);
+        orig = splitCodeblocks(copy, splitAt, 0);
+        copy = moveCodeblocksGapped(orig, /*randInt(BLOCK_SIZE, 12)*/6 + size(cfx));
     }
-    text(cccs);
+
+    //text(cccs);
     return cccs;
 }
 
