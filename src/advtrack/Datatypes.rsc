@@ -35,7 +35,7 @@ data CSxy = CSxy(set[CS] sections);
 data CFxy = CFxy(CF x, CF y);
 
 // Mapping of clone fragment pairs to their corresponding set of clone sections.
-data CCCloneSections = CCCloneSections(map[CFxy fragments, CSxy sections] cccs);
+alias CCCloneSections = map[CFxy fragments, CSxy sections];
 
 /**
  * Are two CFs equal?
@@ -66,3 +66,24 @@ public bool isEqualCF(CF a, CF b) {
 	return true;
 }
 
+
+public bool isEqualLineLocation(location a, location b){
+	return a.file == b.file && a.line == b.line;
+}
+
+
+public bool isIdenticalCF(CF a, CF b){
+
+	if(size(a.lines) != size(b.lines)) {
+		return false;
+	}
+	
+	// Compare all the elements.
+	cmp = zip(a.lines, b.lines);
+	for(<l, r> <- cmp) {
+		if(l.line != r.line || !isEqualLineLocation(l@linelocation, r@linelocation) ) {
+			return false;
+		}
+	}
+	return true;
+}
