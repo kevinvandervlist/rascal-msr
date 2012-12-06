@@ -92,7 +92,7 @@ public CCCloneSections generateCCCS() {
     orig = [toCodeblock(getLipsum(lipsumSize), tmpFile, 0)];
     copy = [moveCodeblock(head(orig), /*randInt(BLOCK_SIZE, 12)*/6 + lipsumSize)];
 
-    for(i <- [0 .. 2]) {
+    for(i <- [0 .. 3]) {
         cfx = toCF(orig);
         cfy = toCF(copy);
         
@@ -100,12 +100,12 @@ public CCCloneSections generateCCCS() {
         cfxy = CFxy(cfx, cfy);
         cccs += CFxyCSxy(cfxy, csxy);
 
-        splitAt = randInt(1, size(cfx) - 2);
+        splitAt = randInt(1, size(largestCodeblock(copy).lines) - 1);
         orig = splitCodeblocks(copy, splitAt, 0);
         copy = moveCodeblocksGapped(orig, /*randInt(BLOCK_SIZE, 12)*/6 + size(cfx));
     }
 
-    text(cccs);
+    //text(cccs);
     return cccs;
 }
 
