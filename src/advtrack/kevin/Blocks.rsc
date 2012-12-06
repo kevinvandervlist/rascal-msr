@@ -97,11 +97,12 @@ private bool matchPair( CF a, CF b) {
 	
 
 	
-	intersection = toSet(a.lines) & toSet(b.lines);
+	//intersection = toSet(a.lines) & toSet(b.lines);
+	intersection = a.lines & b.lines;
 	
-	if (a.file ==|file:///home/vladokom/workspace/uva/HelloWorldGitDemo/src/demo/Hello.java|)
-	if (b.file ==|file:///home/vladokom/workspace/uva/HelloWorldGitDemo/src/demo/CopyOfHello.java|)
-		text(sort(toList(intersection));
+	if (a.file ==|file:///home/kevin/src/HelloWorldGitDemo/src/demo/Hello.java|)
+	if (b.file ==|file:///home/kevin/src/HelloWorldGitDemo/src/demo/CopyOfHello.java|)
+		text(intersection);
 		
 		
 		

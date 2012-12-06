@@ -22,7 +22,8 @@ public int LINE_THRESHOLD = 6;
 public int GAP_THRESHOLD = 6;
 
 
-str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
+//str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
+str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.
