@@ -1,12 +1,31 @@
 module advtrack::tests::testGenerator
 
-//import advtrack::tests::lipsum;
 import advtrack::Datatypes;
+import advtrack::tests::lipsum;
+import advtrack::util::random;
+
+import List;
 import Map;
 
-//TODO: Jimi
-//CCCloneSections generateCCCS(){
-//}
+
+private loc tmpFile = |tmp:///rascal/advtrack/testFile|;
+
+
+public codeline toCodeline(str line, loc file, int linenumber) =
+    codeline(line)[@linelocation = location(file, linenumber)];
+
+public list[codeline] toCodelines(list[str] lines, loc file, int startline) =
+    [toCodeline(lines[i], file, startline + i) | i <- index(lines)];
+
+public codeblock toCodeblock(list[str] lines, loc file, int startline) =
+    codeblock(toCodelines(lines, file, startline), startline);
+
+public tuple[codeblock, codeblock] arbSplitCodeblock(codeblock block) {
+    splitAt = randInt(1, size(codeblock - 1));
+}
+
+
+
 
 
 bool contains(list[CF] unique, CF frag){
@@ -18,6 +37,11 @@ bool contains(list[CF] unique, CF frag){
 	
 	return false;
 }
+
+
+//TODO: Jimi
+//CCCloneSections generateCCCS(){
+//}
 
 
 //TODO: Liam
