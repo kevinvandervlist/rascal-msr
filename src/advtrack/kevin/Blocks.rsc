@@ -80,28 +80,22 @@ public list[CF] createFirstStepCodeFragments(int block, int gap, dupdict dup) {
 	return dropInvalidThreshold(block, gap, sort(l));
 }
 
-
-
-
-
-public list[CFxy] matchFragments(list[CF] cl) {
-	return [CFxy(cla, clb) | cla <- cl, clb <- cl, cla != clb, matchPair(cla, clb)];
-	//for(x <- cl, y <- cl) {
-	//	matchPair(x, y);
-	//}
-	//return;
-	//return [CFxy(cla, clb) | cla <- cl, clb <- cl, cla != clb, matchPair(cla, clb)];
-	//return [<cla, clb> | cla <- cl, clb <- cl, cla != clb, matchPair(cla, clb)];
+public set[CFxy] matchFragments(list[CF] cl) {
+	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl, cla != clb];
+	set[CFxy] ret = {z | y <- x, z <- y};
+	return ret;	
 }
 
 
 
 
-private bool matchPair( CF a, CF b) {
+private list[CFxy] matchPair( CF a, CF b) {
 	// Some temporary buffer structures
 	list[set[int]] bufferA = [{}];
 	list[set[int]] bufferB = [{}];
 	set[int] buf = {};
+	
+	list[CFxy] ret = [];
 
 	// Do this twice so all annotations are retained.
 	intersectionA = a.lines & b.lines;
@@ -109,7 +103,7 @@ private bool matchPair( CF a, CF b) {
 	intersectionB = [x | x <- b.lines, x in intersectionA];
 	
 	if (size(intersectionA) < LINE_THRESHOLD) 
-		return false;
+		return ret;
 	
 	// Get all the indexes of items in the above intersection
 	//indexingA = [indexOf(a.lines, x) | x <- intersection];
@@ -152,7 +146,7 @@ private bool matchPair( CF a, CF b) {
 	
 	// No remaining buffers means no possible match.		
 	if (size(bufferA) == 0 || size(bufferB) == 0)
-		return false;
+		return ret;
 	
 	// Of each remaining buffer, create a list of the remaining lines in them, 
 	// based on their location in the original list. 
@@ -161,21 +155,20 @@ private bool matchPair( CF a, CF b) {
 	sectionsA = [  [getCodelineByLineNumber(a, f) |  f <- sort(toList(x))]  | x <-bufferA];
 	sectionsB = [  [getCodelineByLineNumber(b, g) |  g <- sort(toList(y))]  | y <-bufferB];
 	
-	list[codeline] prev = [];
-	
 	for(x <- sectionsA, 
 		y <- sectionsB) {
-		for ([_*, X*, _*] := x, 
-			 [_*, Y*, _*] := y) {
-			if (X == Y &&  (size(X) >=  LINE_THRESHOLD)) {
-				if (!(prev < X)) {
-					println("X: <X>\nY: <Y>");
+		for ([_*, X*, _*] := x) { 
+			for([_*, Y*, _*] := y) {
+				if (X == Y && (size(X) >=  LINE_THRESHOLD)) {
+					rx = CF(head(X)@linelocation.file, X);
+					ry = CF(head(Y)@linelocation.file, Y);
+					ret += [CFxy(rx, ry)];
 				}
 			}
 		}
 	}
 	
-	return true;
+	return ret;
 }
 
 private codeline getCodelineByLineNumber(CF x, int l) {
