@@ -1,4 +1,3 @@
-
 module advtrack::kevin::Blocks
 
 import advtrack::kevin::Dups;
@@ -7,7 +6,7 @@ import List;
 import Set;
 import IO;
 import util::ValueUI;
-
+import Exception;
 
 import advtrack::Datatypes;
 
@@ -81,106 +80,107 @@ public list[CF] createFirstStepCodeFragments(int block, int gap, dupdict dup) {
 	return dropInvalidThreshold(block, gap, sort(l));
 }
 
-
-
-
-
-public list[CFxy] matchFragments(list[CF] cl) {
-	return [<cla, clb> | cla <- cl, clb <- cl, cla != clb, matchPair(cla, clb)];
+public set[CFxy] matchFragments(list[CF] cl) {
+	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl, cla != clb];
+	set[CFxy] ret = {z | y <- x, z <- y};
+	return ret;	
 }
 
 
 
 
-private bool matchPair( CF a, CF b) {
-	
-	
-
-	
-	//intersection = toSet(a.lines) & toSet(b.lines);
-	intersection = a.lines & b.lines;
-	
-	if (a.file ==|file:///home/kevin/src/HelloWorldGitDemo/src/demo/Hello.java|)
-	if (b.file ==|file:///home/kevin/src/HelloWorldGitDemo/src/demo/CopyOfHello.java|)
-		text(intersection);
-		
-		
-		
-	if (size(intersection) < LINE_THRESHOLD) 
-		return false;
-	
-		
-	indexingA = [indexOf(a.lines, x) | x <- intersection];
-	indexingB = [indexOf(b.lines, x) | x <- intersection];
-		
-		
-	if (a.file ==|file:///home/vladokom/workspace/uva/HelloWorldGitDemo/src/demo/Hello.java|)
-	if (b.file ==|file:///home/vladokom/workspace/uva/HelloWorldGitDemo/src/demo/CopyOfHello.java|)
-		text(sort(indexingA));
-		
+private list[CFxy] matchPair( CF a, CF b) {
+	// Some temporary buffer structures
 	list[set[int]] bufferA = [{}];
 	list[set[int]] bufferB = [{}];
 	set[int] buf = {};
 	
-	sizeL = size(indexingA);
+	list[CFxy] ret = [];
+
+	// Do this twice so all annotations are retained.
+	intersectionA = a.lines & b.lines;
+	//intersectionB = b.lines & a.lines;
+	intersectionB = [x | x <- b.lines, x in intersectionA];
+	
+	if (size(intersectionA) < LINE_THRESHOLD) 
+		return ret;
+	
+	// Get all the indexes of items in the above intersection
+	//indexingA = [indexOf(a.lines, x) | x <- intersection];
+	//indexingB = [indexOf(b.lines, x) | x <- intersection];
+	indexingA = [x@linelocation.line | x <- intersectionA];
+	indexingB = [x@linelocation.line | x <- intersectionB];
+
+	// They can (and probably will be) a different size	
+	sizeA = size(indexingA);
+	sizeB = size(indexingB);
+	
 	indexingAsorted = sort(indexingA);
 	indexingBsorted = sort(indexingB);
-			
-	for  (i <- [0..sizeL-2]) {
+	
+	// Now make sure we get chunks that are within the GAP_THRESHOLD
+	for  (i <- [0..sizeA-2]) {
 		if (indexingAsorted[i+1] - indexingAsorted[i] > GAP_THRESHOLD) {  			
 			bufferA += buf;
 			buf = {};
-		}
-		else {
+		} else {
 			buf += {indexingAsorted[i+1], indexingAsorted[i]};
 		}
 	}
+	bufferA += buf;
+	buf = {};
 		
-		
-	for  (i <- [0..sizeL-2]) {
+	for  (i <- [0..sizeB-2]) {
 		if (indexingBsorted[i+1] - indexingBsorted[i] > GAP_THRESHOLD) {  			
 			bufferB += buf;
 			buf = {};
-		}
-		else {
+		} else {
 			buf += {indexingBsorted[i+1], indexingBsorted[i]};
 		}
 	}
-			
-		
-	bufferA = [ x | x <- bufferA, size(x) >= LINE_THRESHOLD];
-	bufferB = [ x | x <- bufferB, size(x) >= LINE_THRESHOLD];		
-		
-	if (size(bufferA) == 0 || size(bufferB) == 0)
-		return false;
+	bufferB += buf;
 	
-	sectionsA = [  [a.lines[f] |  f <- sort(toList(x))]  | x <-bufferA];
-	sectionsB = [  [b.lines[f] |  f <- sort(toList(x))]  | x <-bufferB];
-		
-	list[codeline] prev = [];
-		
-		
-		
-	for (x <- sectionsA) {
-		for (y <- sectionsB) {
-			for ( [_*, X*, _*] := x) {
-				for ( [_*, Y*, _*] := y) {
-					if (X == Y &&  (size(X) >=  LINE_THRESHOLD)) {
-						if (!(prev < X)) {
-							println(X);
-						} 
-						prev = X;
-						
-					}
+	// Only retain buffers that are > LINE_THRESHOLD
+	bufferA = [ x | x <- bufferA, size(x) >= LINE_THRESHOLD];
+	bufferB = [ x | x <- bufferB, size(x) >= LINE_THRESHOLD];
+	
+	// No remaining buffers means no possible match.		
+	if (size(bufferA) == 0 || size(bufferB) == 0)
+		return ret;
+	
+	// Of each remaining buffer, create a list of the remaining lines in them, 
+	// based on their location in the original list. 
+	//sectionsA = [  [a.lines[f] |  f <- sort(toList(x))]  | x <-bufferA];
+	//sectionsB = [  [b.lines[f] |  f <- sort(toList(x))]  | x <-bufferB];
+	sectionsA = [  [getCodelineByLineNumber(a, f) |  f <- sort(toList(x))]  | x <-bufferA];
+	sectionsB = [  [getCodelineByLineNumber(b, g) |  g <- sort(toList(y))]  | y <-bufferB];
+	
+	for(x <- sectionsA, 
+		y <- sectionsB) {
+		for ([_*, X*, _*] := x) { 
+			for([_*, Y*, _*] := y) {
+				if (X == Y && (size(X) >=  LINE_THRESHOLD)) {
+					rx = CF(head(X)@linelocation.file, X);
+					ry = CF(head(Y)@linelocation.file, Y);
+					ret += [CFxy(rx, ry)];
 				}
 			}
 		}
 	}
-			 
-	return true;
+	
+	return ret;
 }
 
-
+private codeline getCodelineByLineNumber(CF x, int l) {
+	r = [t | t <- x.lines, t@linelocation.line == l];
+	if( r == []) {
+		throw "L: <l> cannot be found in CF: \n<x>";
+	} else {
+		if(size(r) > 1)
+			throw "WTF: Multiple occurences found.";
+		return head(r);
+	}
+}
 
 
 
