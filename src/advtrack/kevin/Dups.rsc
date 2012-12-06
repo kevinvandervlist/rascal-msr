@@ -94,7 +94,7 @@ public void main() {
 	// Create a list of code fragments for further analysis.
 	cl = createCodeFragments(LINE_THRESHOLD, GAP_THRESHOLD, occurences);
 	
-//	text(cl);
+	//	text(cl);
 	clonePairs = matchFragments(cl);
 	
 
