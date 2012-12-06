@@ -41,6 +41,7 @@ public list[str] getNoise(int n) =
     slice(shuffle(muspil), 0, n);
 
 public list[str] getNextNoise(int n) {
-    slice(muspil, muspilCounter % size(muspil), n);
+    noise = slice(muspil, muspilCounter % size(muspil), n);
     muspilCounter += n;
+    return noise;
 } 

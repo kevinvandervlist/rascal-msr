@@ -9,6 +9,7 @@ import IO;
 import List;
 import Map;
 
+
 import util::ValueUI;
 
 
@@ -104,12 +105,87 @@ public CC generateCC(CCCloneSections cccs){
 }
 
 
-///TODO: Liam
-public void generateFile(CC cc){
+//----------- Writing Clone class to file -------------------
 
-	list[CF] fragments =  cc.fragments;
+alias Files =  map[loc, list[codeline]];
+
+Files sortFiles(Files files){
+	bool (&T a, &T b) sortFunc = bool(codeline a, codeline b){ return a@linelocation.line <= b@linelocation.line; }; 
+	return (key: sort(files[key], sortFunc) | key <- domain(files)); 
+}
+
+/** determine which files are covered by the clone fragments,
+each fragment in that file adds its lines to it
+**/
+public Files getFiles(list[CF] fragments){
+	Files files = ();
 	
+	//inventorize which files there are by looping through fragments,
+	//add all encoutered codelines to the corresponding file
+	for(frag <- fragments){
+		files[frag.file] = (frag.file in files) ? 
+								(files[frag.file] + frag.lines) : frag.lines;
+	}
 	
+	return sortFiles(files);
+}
+
+
+/**
+create the string lists that represent all the content in a file
+content is filled with clone lines at the specified line numbers and padded with noise on other line numbers 
+**/
+public list[str] fillFileLines(list[codeline] clonedlines){
+	list[str] result = [];
+	int currentlinenumber = 0;
+	
+	for(clonedline <- clonedlines){
+		int clonedlinenumber = clonedline@linelocation.line;
+		
+		int linesofnoise = clonedlinenumber - currentlinenumber;
+		
+		if(linesofnoise > 1)
+			result += getNoise(linesofnoise-1);
+		
+		result +=  clonedline.line;
+		currentlinenumber = clonedlinenumber;
+	}
+	
+	result += getNoise(randInt(0, 10));
+	
+	return result;
+}
+
+
+/**
+physical output to file
+there seems to be a bug in rascal file writing that does not automatically add line breaks after each value,
+even though the documentation says it does
+**/
+void outputToFile(loc file, list[str] lines){
+
+	int writenr = 0;
+	
+	for(line <- lines){
+	
+		if(writenr == 0)
+			writeFile(file, line, "\n");
+		else	
+			appendToFile(file, line, "\n");
+			
+		writenr += 1;
+	}
+}
+
+
+public void generateFiles(CC cc){
+
+	Files files =  getFiles(cc.fragments);
+	
+	keys = domain(files);
+	for( key <- keys ){
+		outputToFile(key, fillFileLines(files[key]));
+	}
 }
 
  

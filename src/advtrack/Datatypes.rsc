@@ -40,6 +40,9 @@ data CFxyCSxy = CFxyCSxy(CFxy cf, CSxy cs);
 // Mapping of clone fragment pairs to their corresponding set of clone sections.
 alias CCCloneSections = list[CFxyCSxy sections];
 
+//a file
+data File = File(loc filelocation, list[str] lines);
+
 /**
  * Are two CFs equal?
  * Note: This compares the lines, not the codes. 
