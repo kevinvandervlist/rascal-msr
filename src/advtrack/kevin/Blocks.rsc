@@ -93,74 +93,62 @@ public list[CFxy] matchFragments(list[CF] cl) {
 
 
 private bool matchPair( CF a, CF b) {
-	
-	
-
-	
-	//intersection = toSet(a.lines) & toSet(b.lines);
-	intersection = a.lines & b.lines;
-	
-	if (a.file ==|file:///home/kevin/src/HelloWorldGitDemo/src/demo/Hello.java|)
-	if (b.file ==|file:///home/kevin/src/HelloWorldGitDemo/src/demo/CopyOfHello.java|)
-		text(intersection);
-		
-		
-		
-	if (size(intersection) < LINE_THRESHOLD) 
-		return false;
-	
-		
-	indexingA = [indexOf(a.lines, x) | x <- intersection];
-	indexingB = [indexOf(b.lines, x) | x <- intersection];
-		
-		
-	if (a.file ==|file:///home/vladokom/workspace/uva/HelloWorldGitDemo/src/demo/Hello.java|)
-	if (b.file ==|file:///home/vladokom/workspace/uva/HelloWorldGitDemo/src/demo/CopyOfHello.java|)
-		text(sort(indexingA));
-		
+	// Some temporary buffer structures
 	list[set[int]] bufferA = [{}];
 	list[set[int]] bufferB = [{}];
 	set[int] buf = {};
+
+	intersection = a.lines & b.lines;
+
+	if (size(intersection) < LINE_THRESHOLD) 
+		return false;
+	
+	// Get all the indexes of items in the above intersection
+	indexingA = [indexOf(a.lines, x) | x <- intersection];
+	indexingB = [indexOf(b.lines, x) | x <- intersection];
+	
 	
 	sizeL = size(indexingA);
 	indexingAsorted = sort(indexingA);
 	indexingBsorted = sort(indexingB);
-			
+	
+	// Now make sure we get chunks that are within the GAP_THRESHOLD
 	for  (i <- [0..sizeL-2]) {
 		if (indexingAsorted[i+1] - indexingAsorted[i] > GAP_THRESHOLD) {  			
 			bufferA += buf;
 			buf = {};
-		}
-		else {
+		} else {
 			buf += {indexingAsorted[i+1], indexingAsorted[i]};
 		}
 	}
-		
 		
 	for  (i <- [0..sizeL-2]) {
 		if (indexingBsorted[i+1] - indexingBsorted[i] > GAP_THRESHOLD) {  			
 			bufferB += buf;
 			buf = {};
-		}
-		else {
+		} else {
 			buf += {indexingBsorted[i+1], indexingBsorted[i]};
 		}
 	}
-			
-		
+	
+	// Only retain buffers that are > LINE_THRESHOLD
 	bufferA = [ x | x <- bufferA, size(x) >= LINE_THRESHOLD];
 	bufferB = [ x | x <- bufferB, size(x) >= LINE_THRESHOLD];		
-		
+
+	// No remaining buffers means no possible match.		
 	if (size(bufferA) == 0 || size(bufferB) == 0)
 		return false;
 	
+	// Of each remaining buffer, create a list of the remaining lines in them, 
+	// based on their location in the original list. 
 	sectionsA = [  [a.lines[f] |  f <- sort(toList(x))]  | x <-bufferA];
 	sectionsB = [  [b.lines[f] |  f <- sort(toList(x))]  | x <-bufferB];
 		
 	list[codeline] prev = [];
-		
-		
-		
+	
+	println(sectionsA);
+	
+	/*
 	for (x <- sectionsA) {
 		for (y <- sectionsB) {
 			for ( [_*, X*, _*] := x) {
@@ -176,7 +164,7 @@ private bool matchPair( CF a, CF b) {
 			}
 		}
 	}
-			 
+	*/	 
 	return true;
 }
 
