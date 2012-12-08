@@ -3,6 +3,7 @@ module advtrack::kevin::Dups
 import List;
 import Map;
 import Set;
+import String;
 
 import resource::versions::Versions;
 import resource::versions::git::Git;
@@ -39,12 +40,23 @@ private dupdict createLineMap(list[loc] files) {
 	set[location] init = {};
 	
 	for(file <- files) {
-		lines = readFileLines(file);
+		linesString = readFile(file);
+		  // Normalize line breaks
+  	 	 linesString = replaceAll(linesString, "\r", "\n");
+    
+    	// Remove all comments and leading spaces
+    	while (/<x:\/\*.*?\*\/\s*|\/{2}.*?\s*?\n|\n\s+?>/s := linesString)
+        	linesString = replaceFirst(linesString, x, "\n");
+    
+    	// Remove all empty lines and closing curly braces
+    	lineList = split("\n", linesString);
+    	lineList = lineList - [x | x <- lineList, /^\s*\}*\s*$/ := x];	
+    	
 		int count = 0;
 
-		for(line <- lines) {
-			//line = lexLine(line);
-			ret[line]?init += { location(file, count) };
+		for(line <- lineList) {
+			lineLex = lexLine(line);
+			ret[lineLex]?init += { location(file, count) };
 			count += 1;
 		}
 	}
@@ -94,7 +106,7 @@ public void main() {
 	
 	// Match fragments with each other to form clone classes
 	fragmentPairs = matchFragments(fragments);
-	//text(fragmentPairs);
+	text(fragmentPairs);
 	
 	// Create the clone classes from the mathed pairs
 	cloneClasses = createCloneClasses(fragmentPairs);
