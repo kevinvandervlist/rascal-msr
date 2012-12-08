@@ -80,10 +80,32 @@ public list[CF] createFirstStepCodeFragments(int block, int gap, dupdict dup) {
 	return dropInvalidThreshold(block, gap, sort(l));
 }
 
+
+
 public set[CFxy] matchFragments(list[CF] cl) {
-	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl, cla != clb];
-	set[CFxy] ret = {z | y <- x, z <- y};
-	return ret;	
+	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl/*, cla != clb*/];
+	
+	// use the set representation to get rid of the mirror and duplicate elements
+	set[CFxyComp] retComp = {toComp(z) | y <- x, z <- y};
+
+	// convert back to pair representation and discard identical blocks from within the same fragment
+	set[CFxy] ret = {fromComp(z) | z <- retComp, size(z.s) > 1};
+		
+	// create a map (size : CFxy) to speed up the rest of the computation
+	map[int, list[CFxy]] sortedRet = ( );
+	list[CFxy] init = [];
+	for (z <- ret)
+		sortedRet[size(z.x.lines)]?init += [z];
+	
+	// remove elements already contained in other elements
+	for (s <- sortedRet) 
+		for (k <- sortedRet && k < s) 
+			for (z <- sortedRet[s])
+				for (z1 <- sortedRet[k])
+					if (isSubCFxy(z1, z))
+						sortedRet[k] -= [z1];
+	
+	return {e | s <- sortedRet, e <- sortedRet[s]};	
 }
 
 
@@ -169,6 +191,10 @@ private list[CFxy] matchPair( CF a, CF b) {
 	
 	return ret;
 }
+
+
+
+
 
 private codeline getCodelineByLineNumber(CF x, int l) {
 	r = [t | t <- x.lines, t@linelocation.line == l];

@@ -1,6 +1,7 @@
 module advtrack::Datatypes
 
 import List;
+import Set;
 
 // location of a line from a source file
 data location = location(loc file, int line);
@@ -11,10 +12,16 @@ data location = location(loc file, int line);
 data codeline = codeline(str line);
 anno location codeline @ linelocation;
 
+// codeline representation without the annotation for ease of comparison
+data codelineComp = codelineComp(str line, location linelocation);
+
 // Clone Fragment CF is a set of a codelines and their location
 // The file location will be an annotation, because it will be very 
 // easy to compare CFs that way.
 data CF = CF(loc file, list[codeline] lines);
+
+// Code Fragment representation with the alternative codeline
+data CFComp = CFComp(loc file, list[codelineComp] lines);
 
 // Clone Class CC is a list of CFs
 data CC = CC(list[CF] fragments);
@@ -33,6 +40,10 @@ data CSxy = CSxy(set[CS] sections);
 
 //Pair of clone fragments within a given clone class (CC)
 data CFxy = CFxy(CF x, CF y);
+
+// Pair of clone fragments with alternative representation holding a set of two elements -
+// this way mirror elements will be discarded
+data CFxyComp = CFxyComp(set[CFComp] s);
 
 //Pair of pair of Clone Fragments (CFxy) and their clone sections (CSxy)
 data CFxyCSxy = CFxyCSxy(CFxy cf, CSxy cs);
@@ -93,3 +104,47 @@ public bool isIdenticalCF(CF a, CF b){
 	}
 	return true;
 }
+
+
+
+//check if pair a contains subfragments of pair b
+public bool isSubCFxy(CFxy a, CFxy b) {
+	return ((isSubCF(toComp(a.x), toComp(b.x)) && isSubCF(toComp(a.y), toComp(b.y))) || 
+				   (isSubCF(toComp(a.y), toComp(b.x)) && isSubCF(toComp(a.x), toComp(b.y)))); 
+}
+
+
+//check if a is a subfragment of b 
+public bool isSubCF(CFComp a, CFComp b) {
+	return a.lines <= b.lines;
+}
+
+
+public codelineComp toComp(codeline c) {
+	return codelineComp(c.line, c@linelocation);
+}
+
+public CFComp toComp(CF c) {
+	return CFComp(c.file, [toComp(z) | z <- c.lines]);
+}
+
+public CFxyComp toComp(CFxy c) {
+	return CFxyComp({toComp(c.x), toComp(c.y)});
+}
+
+public CFxy fromComp(CFxyComp c) {
+	<x, s> = takeOneFrom(c.s);
+	<y, s> = takeOneFrom(s);
+//	if (!s.isEmpty()) 
+//		throw "WTF: more than 2 elements";
+	return CFxy(fromComp(x), fromComp(y));
+}
+
+public CF fromComp(CFComp c) {
+	return CF(c.file, [fromComp(l) | l <- c.lines]);
+}
+
+public codeline fromComp(codelineComp c) {
+	return codeline(c.line)[@linelocation = c.linelocation];
+}
+

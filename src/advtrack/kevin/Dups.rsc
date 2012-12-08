@@ -22,8 +22,8 @@ public int LINE_THRESHOLD = 6;
 public int GAP_THRESHOLD = 6;
 
 
-//str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
-str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
+str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
+//str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.
@@ -94,8 +94,9 @@ public void main() {
 	// Create a list of code fragments for further analysis.
 	cl = createCodeFragments(LINE_THRESHOLD, GAP_THRESHOLD, occurences);
 	
-	//	text(cl);
+	//text(cl);
 	clonePairs = matchFragments(cl);
 	
+	text(clonePairs);
 
 }
