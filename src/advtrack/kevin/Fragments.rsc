@@ -1,16 +1,33 @@
-module advtrack::kevin::Blocks
-
-import advtrack::kevin::Dups;
+module advtrack::kevin::Fragments
 
 import List;
 import Set;
-import IO;
+import util::Math;
 import util::ValueUI;
-import Exception;
 
+import advtrack::kevin::Dups;
 import advtrack::Datatypes;
 
+import IO;
+
+
 alias dupdict = map[str line, set[location] locs];
+
+/**
+ * Create a list of CFs that validate given constraints.
+ * This is the first step.
+ * @param block The _minimum_ size of a block in lines.
+ * @param gap The _maximum_ size of the gap between two elements to 
+ * still be considered part of the same block.
+ * @return rel[location, str] with all <location, str> tuples 
+ */
+public list[CF] createCodeFragments(dupdict dup) {
+	// Step one: initial cf's.
+	locationRelation = createStringLocationRel(dup);
+	return dropInvalidThreshold(sort(locationRelation));
+	
+}
+
 
 /**
  * Create a rel[location, string] from a dupdict.
@@ -19,10 +36,11 @@ alias dupdict = map[str line, set[location] locs];
  * @param d A dupdict: {location}
  * @return rel[location, str] with all <location, str> tuples 
  */
-
 private rel[location, str] createStringLocationRel(dupdict dup) {
 	return { < x, d> | d <- dup, x <- dup[d] };
 }
+
+
 
 /**
  * Drop all lines from a rel[location, str] with <location, str> tuples, based on
@@ -32,7 +50,7 @@ private rel[location, str] createStringLocationRel(dupdict dup) {
  * @return rel[location, str] with all <location, str> tuples that conform to given constraints. 
  */
  
-private list[CF] dropInvalidThreshold(int block, int gap, list[tuple[location l, str s]] lst) {
+public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
 	rel[location l, str s] buf = {};
 	list[CF] ret = [];
 	
@@ -43,12 +61,12 @@ private list[CF] dropInvalidThreshold(int block, int gap, list[tuple[location l,
 	for(x <- lst) {
 		// Same file, in block threshold?
 		if(	(x.l.file == prev.file) &&
-			((prev.line + gap) >= x.l.line)) {
+			((prev.line + GAP_THRESHOLD) >= x.l.line)) {
 			block_size += 1;
 			buf += x;
 		} else {
 			// Different file or gap check failed, reset counter stuff and possibly add to ret
-			if((buf != {}) && (block_size >= block)) {
+			if((buf != {}) && (block_size >= LINE_THRESHOLD)) {
 				ret += [CF(prev.file, [ e | el <- sort(buf), e := codeline(el.s)[@linelocation=el.l]])];
 			}
 			block_size = 0;
@@ -59,38 +77,31 @@ private list[CF] dropInvalidThreshold(int block, int gap, list[tuple[location l,
 	}
 	
 	// Add the current buffer if it is still within constraint boundaries
-	if((buf != {}) && (block_size >= block)) {
+	if((buf != {}) && (block_size >= LINE_THRESHOLD)) {
 		ret += [CF(prev.file, [ e | el <- sort(buf), e := codeline(el.s)[@linelocation=el.l]])];
 	}
 
 	return ret;
 }
 
+
+
 /**
- * Create a list of CFs that validate given constraints.
- * This is the first step.
- * @param block The _minimum_ size of a block in lines.
- * @param gap The _maximum_ size of the gap between two elements to 
- * still be considered part of the same block.
- * @return rel[location, str] with all <location, str> tuples 
+ * Match fragments that are identical or similar.
+ * @param cl The list containing the code fragments to be matched.
+ * @return set[CFxy] A set containing all matching pairs of code fragments
  */
-
-public list[CF] createFirstStepCodeFragments(int block, int gap, dupdict dup) {
-	l = createStringLocationRel(dup);
-	return dropInvalidThreshold(block, gap, sort(l));
-}
-
-
-
 public set[CFxy] matchFragments(list[CF] cl) {
-	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl/*, cla != clb*/];
+
+	// also match each fragment with itself to find duplication inside a single CF
+	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
 	
 	// use the set representation to get rid of the mirror and duplicate elements
 	set[CFxyComp] retComp = {toComp(z) | y <- x, z <- y};
 
 	// convert back to pair representation and discard identical blocks from within the same fragment
 	set[CFxy] ret = {fromComp(z) | z <- retComp, size(z.s) > 1};
-		
+			
 	// create a map (size : CFxy) to speed up the rest of the computation
 	map[int, list[CFxy]] sortedRet = ( );
 	list[CFxy] init = [];
@@ -110,14 +121,19 @@ public set[CFxy] matchFragments(list[CF] cl) {
 
 
 
+
+
+
 /**
+ * Find any matches within two code fragments
+ * @return list[CFxy] all possible matches found (possibly including duplicates)
+ *
  * Note: Presumes CF's are already sorted (which currently is the case) -- Kevin
  */
 private list[CFxy] matchPair( CF a, CF b) {
 	// Some temporary buffer structures
 	list[set[int]] bufferA = [{}];
 	list[set[int]] bufferB = [{}];
-	set[int] buf = {};
 	list[CFxy] ret = [];
 
 	// Do this twice so all annotations are retained.
@@ -132,40 +148,11 @@ private list[CFxy] matchPair( CF a, CF b) {
 	indexingA = [x@linelocation.line | x <- intersectionA];
 	indexingB = [x@linelocation.line | x <- intersectionB];
 
-	// They can (and probably will be) a different size	
-	sizeA = size(indexingA);
-	sizeB = size(indexingB);
+	// get all chunks that are within GAP_THRESHOLD
+	// and are bigger than LINE_THRESHOLD
+	bufferA = filterOut(indexingA);
+	bufferB = filterOut(indexingB);
 
-	// Now make sure we get chunks that are within the GAP_THRESHOLD
-	for  (i <- [0..sizeA-2]) {
-		if (indexingA[i+1] - indexingA[i] > GAP_THRESHOLD) {  			
-			bufferA += buf;
-			buf = {};
-		} else {
-			buf += {indexingA[i+1], indexingA[i]};
-		}
-	}
-	
-	// Make sure to store the current buffer as well, and to clear it afterwards.
-	bufferA += buf;
-	buf = {};
-	
-	// And do so for B:	
-	for  (i <- [0..sizeB-2]) {
-		if (indexingB[i+1] - indexingB[i] > GAP_THRESHOLD) {  			
-			bufferB += buf;
-			buf = {};
-		} else {
-			buf += {indexingB[i+1], indexingB[i]};
-		}
-	}
-	// Again, do not forget to add buf to the bufferB
-	bufferB += buf;
-	
-	// Only retain buffers that are >= LINE_THRESHOLD
-	bufferA = [ x | x <- bufferA, size(x) >= LINE_THRESHOLD];
-	bufferB = [ x | x <- bufferB, size(x) >= LINE_THRESHOLD];
-	
 	// No remaining buffers means no possible match.		
 	if (size(bufferA) == 0 || size(bufferB) == 0)
 		return ret;
@@ -176,8 +163,7 @@ private list[CFxy] matchPair( CF a, CF b) {
 	sectionsB = [  [getCodelineByLineNumber(b, g) |  g <- sort(toList(y))]  | y <-bufferB];
 	
 	// This is gruesomely expensive...
-	for(x <- sectionsA, 
-		y <- sectionsB) {
+	for(x <- sectionsA, 	y <- sectionsB) {
 		for ([_*, X*, _*] := x) { 
 			for([_*, Y*, _*] := y) {
 				if (X == Y && (size(X) >=  LINE_THRESHOLD)) {
@@ -210,5 +196,22 @@ private codeline getCodelineByLineNumber(CF x, int l) {
 
 
 
-
-
+// get all chunks that are within GAP_THRESHOLD
+// and are bigger than LINE_THRESHOLD
+list[set[int]] filterOut(list[int] indexing) {
+	s = size(indexing);
+	list[set[int]] buffer = [{}];
+	set[int] buf = {};
+	
+	for  (i <- [0..s-2]) {
+		if (indexing[i+1] - indexing[i] > GAP_THRESHOLD) {  			
+			buffer += buf;
+			buf = {};
+		} else {
+			buf += {indexing[i+1], indexing[i]};
+		}
+	}
+	buffer +=  buf;
+	
+	return	 [ x | x <- buffer, size(x) >= LINE_THRESHOLD];
+}

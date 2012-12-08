@@ -8,8 +8,8 @@ import resource::versions::Versions;
 import resource::versions::git::Git;
 
 import advtrack::Datatypes;
-import advtrack::kevin::Blocks;
-import advtrack::kevin::CodeFragments;
+import advtrack::kevin::Fragments;
+import advtrack::kevin::Classes;
 import advtrack::kevin::Filenames;
 import advtrack::kevin::Git;
 import advtrack::kevin::lexer::Lexer;
@@ -38,16 +38,14 @@ private dupdict createLineMap(list[loc] files) {
 	// Needed, see issue 32: https://github.com/cwi-swat/rascal/issues/32
 	set[location] init = {};
 	
-	for(f <- files) {
-		lines = readFileLines(f);
-		int cnt = 0;
+	for(file <- files) {
+		lines = readFileLines(file);
+		int count = 0;
 
-		for(l <- lines) {
-			//l = lexLine(rl);
-			//println(rl);
-
-			ret[l]?init += { location(f, cnt) };
-			cnt += 1;
+		for(line <- lines) {
+			//line = lexLine(line);
+			ret[line]?init += { location(file, count) };
+			count += 1;
 		}
 	}
 
@@ -60,8 +58,8 @@ private dupdict createLineMap(list[loc] files) {
  * @return dupdict A map[str line, set[location] locs];
  */
 
-private dupdict stripSingles(dupdict d) {
-	return (k : d[k] | k <- d, size(d[k]) > 1);
+private dupdict stripSingles(dupdict dict) {
+	return (key : dict[key] | key <- dict, size(dict[key]) > 1);
 }
 
 /**
@@ -80,23 +78,27 @@ public void main() {
 	
 	// Get a list of files:
 	m = cunit(branch("master"));
-	fl = getFilesFromCheckoutUnit(m, repo);
+	fileList = getFilesFromCheckoutUnit(m, repo);
 	
 	// Remove files that end with a class extension
-	fl = stripFileExtension(".class", fl);
+	fileList = stripFileExtension(".class", fileList);
 	
 	// Create a map with all duplicate occurences.
-	dup_occurences = createLineMap(fl);
+	dup_occurences = createLineMap(fileList);
 	
 	// Filter the strings that occur only once.
 	occurences = stripSingles(dup_occurences);
 
 	// Create a list of code fragments for further analysis.
-	cl = createCodeFragments(LINE_THRESHOLD, GAP_THRESHOLD, occurences);
+	fragments = createCodeFragments(occurences);
 	
-	//text(cl);
-	clonePairs = matchFragments(cl);
+	// Match fragments with each other to form clone classes
+	fragmentPairs = matchFragments(fragments);
+	//text(fragmentPairs);
 	
-	text(clonePairs);
+	// Create the clone classes from the mathed pairs
+	cloneClasses = createCloneClasses(fragmentPairs);
+	
+	text(cloneClasses);
 
 }

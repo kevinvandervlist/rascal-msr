@@ -107,6 +107,11 @@ public bool isIdenticalCF(CF a, CF b){
 
 
 
+public bool isIdenticalCFxy(CFxy a, CFxy b) {
+	return (isIdenticalCF(a.x, b.x) && isIdentical(a.y, b.y)) ||
+			    (isIdenticalCF(a.x, b.y) && isIdentical(a.y, b.x));
+}
+
 //check if pair a contains subfragments of pair b
 public bool isSubCFxy(CFxy a, CFxy b) {
 	return ((isSubCF(toComp(a.x), toComp(b.x)) && isSubCF(toComp(a.y), toComp(b.y))) || 
@@ -135,8 +140,6 @@ public CFxyComp toComp(CFxy c) {
 public CFxy fromComp(CFxyComp c) {
 	<x, s> = takeOneFrom(c.s);
 	<y, s> = takeOneFrom(s);
-//	if (!s.isEmpty()) 
-//		throw "WTF: more than 2 elements";
 	return CFxy(fromComp(x), fromComp(y));
 }
 
