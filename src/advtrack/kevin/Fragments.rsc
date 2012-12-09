@@ -7,6 +7,7 @@ import util::ValueUI;
 
 import advtrack::kevin::Dups;
 import advtrack::Datatypes;
+import advtrack::Constants;
 
 import IO;
 
@@ -61,12 +62,12 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
 	for(x <- lst) {
 		// Same file, in block threshold?
 		if(	(x.l.file == prev.file) &&
-			((prev.line + GAP_THRESHOLD) >= x.l.line)) {
+			((prev.line + GAP_SIZE) >= x.l.line)) {
 			block_size += 1;
 			buf += x;
 		} else {
 			// Different file or gap check failed, reset counter stuff and possibly add to ret
-			if((buf != {}) && (block_size >= LINE_THRESHOLD)) {
+			if((buf != {}) && (block_size >= BLOCK_SIZE)) {
 				ret += [CF(prev.file, [ e | el <- sort(buf), e := codeline(el.s)[@linelocation=el.l]])];
 			}
 			block_size = 0;
@@ -77,7 +78,7 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
 	}
 	
 	// Add the current buffer if it is still within constraint boundaries
-	if((buf != {}) && (block_size >= LINE_THRESHOLD)) {
+	if((buf != {}) && (block_size >= BLOCK_SIZE)) {
 		ret += [CF(prev.file, [ e | el <- sort(buf), e := codeline(el.s)[@linelocation=el.l]])];
 	}
 
@@ -141,15 +142,15 @@ private list[CFxy] matchPair( CF a, CF b) {
 	intersectionB = b.lines & a.lines;
 	
 	// Early return to save time.
-	if (size(intersectionA) < LINE_THRESHOLD) 
+	if (size(intersectionA) < BLOCK_SIZE) 
 		return ret;
 	
 	// Get all the indexes of items in the above intersection
 	indexingA = [x@linelocation.line | x <- intersectionA];
 	indexingB = [x@linelocation.line | x <- intersectionB];
 
-	// get all chunks that are within GAP_THRESHOLD
-	// and are bigger than LINE_THRESHOLD
+	// get all chunks that are within GAP_SIZE
+	// and are bigger than BLOCK_SIZE
 	bufferA = filterOut(indexingA);
 	bufferB = filterOut(indexingB);
 
@@ -166,7 +167,7 @@ private list[CFxy] matchPair( CF a, CF b) {
 	for(x <- sectionsA, 	y <- sectionsB) {
 		for ([_*, X*, _*] := x) { 
 			for([_*, Y*, _*] := y) {
-				if (X == Y && (size(X) >=  LINE_THRESHOLD)) {
+				if (X == Y && (size(X) >= BLOCK_SIZE)) {
 					rx = CF(head(X)@linelocation.file, X);
 					ry = CF(head(Y)@linelocation.file, Y);
 					ret += [CFxy(rx, ry)];
@@ -196,15 +197,15 @@ private codeline getCodelineByLineNumber(CF x, int l) {
 
 
 
-// get all chunks that are within GAP_THRESHOLD
-// and are bigger than LINE_THRESHOLD
+// get all chunks that are within GAP_SIZE
+// and are bigger than BLOCK_SIZE
 list[set[int]] filterOut(list[int] indexing) {
 	s = size(indexing);
 	list[set[int]] buffer = [{}];
 	set[int] buf = {};
 	
 	for  (i <- [0..s-2]) {
-		if (indexing[i+1] - indexing[i] > GAP_THRESHOLD) {  			
+		if (indexing[i+1] - indexing[i] > GAP_SIZE) {  			
 			buffer += buf;
 			buf = {};
 		} else {
@@ -213,5 +214,5 @@ list[set[int]] filterOut(list[int] indexing) {
 	}
 	buffer +=  buf;
 	
-	return	 [ x | x <- buffer, size(x) >= LINE_THRESHOLD];
+	return	 [ x | x <- buffer, size(x) >= BLOCK_SIZE];
 }
