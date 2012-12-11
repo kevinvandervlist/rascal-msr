@@ -79,6 +79,7 @@ private dupdict stripSingles(dupdict dict) {
  */
 
 public void main() {
+
 	// Create a 'Connection' datatype.
 	con = fs(gitLoc);
 	
