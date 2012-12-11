@@ -14,17 +14,13 @@ import advtrack::kevin::Classes;
 import advtrack::kevin::Filenames;
 import advtrack::kevin::Git;
 import advtrack::kevin::lexer::Lexer;
+import advtrack::Constants;
 
 import IO;
 import util::ValueUI;
 
-
-public int LINE_THRESHOLD = 6;
-public int GAP_THRESHOLD = 6;
-
-
-str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
-//str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
+//str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
+str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.
