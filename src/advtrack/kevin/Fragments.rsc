@@ -106,7 +106,7 @@ public list[CFxy] matchFragments(list[CF] cl) {
 	for (z <- ret)
 		sortedRet[size(z.x.lines)]?init += [z];
 
-	// remove elements already contained in other elements and mirror elements
+	// remove elements already contained in other elements 
 	for (s <- sortedRet) 
 		for (k <- sortedRet && k < s) 
 			for (z <- sortedRet[s])
@@ -114,10 +114,11 @@ public list[CFxy] matchFragments(list[CF] cl) {
 					if (isSubCFxy(z1, z) && !isIdenticalCFxy(z1, z))
 						sortedRet[k] -= [z1];
 	
-	
+	// make a list of all pairs including the mirror elements
 	list[CFxy] retMirror = [e | s <- sortedRet, e <- sortedRet[s]];	
 	ret = [];
 	
+	// construct a return list without the mirror elements
 	for (z <- retMirror) {
 		bool found = false;
 		for (z1 <- ret && !found)

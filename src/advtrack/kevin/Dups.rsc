@@ -73,26 +73,12 @@ private dupdict stripSingles(dupdict dict) {
 /**
  * Test main stuff.
  */
-
-public void main() {
-
-	// Create a 'Connection' datatype.
-	con = fs(gitLoc);
-	
-	// Reverse so the oldest revision will be on top
-	set[LogOption] opt = {reverse()};
-	
-	// Create a 'Repository' datatype of the git Connection
-	repo = git(con, "", opt);
-	
-	// Get a list of files:
-	m = cunit(branch("master"));
-	fileList = getFilesFromCheckoutUnit(m, repo);
-	
-	// Remove files that end with a class extension
-	fileList = stripFileExtension(".class", fileList);
-	
-	// Create a map with all duplicate occurences.
+ 
+ 
+ 
+ public list[CC] getCloneClasses(list[loc] fileList) {
+ 
+ 	// Create a map with all duplicate occurences.
 	dup_occurences = createLineMap(fileList);
 	
 	// Filter the strings that occur only once.
@@ -119,6 +105,31 @@ public void main() {
 	// Create the clone classes from the mathed pairs
 	cloneClasses = createCloneClasses(fragmentPairs);
 	
-	text(cloneClasses);
+	return cloneClasses;
+ 
+ }
+ 
+ 
+ 
+
+public void main() {
+
+	// Create a 'Connection' datatype.
+	con = fs(gitLoc);
+	
+	// Reverse so the oldest revision will be on top
+	set[LogOption] opt = {reverse()};
+	
+	// Create a 'Repository' datatype of the git Connection
+	repo = git(con, "", opt);
+	
+	// Get a list of files:
+	m = cunit(branch("master"));
+	fileList = getFilesFromCheckoutUnit(m, repo);
+	
+	// Remove files that end with a class extension
+	fileList = stripFileExtension(".class", fileList);
+	
+	cc = getCloneClasses(fileList);
 
 }
