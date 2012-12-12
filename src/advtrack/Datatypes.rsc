@@ -89,22 +89,37 @@ public bool isEqualLineLocation(location a, location b){
 }
 
 
-public bool isIdenticalCF(CF a, CF b){
+public bool isIdenticalCFxy(CFxy a, CFxy b) =
+    isIdenticalCF(a.x, b.x) && isIdenticalCF(a.y, b.y);
 
-	if(size(a.lines) != size(b.lines)) {
-		return false;
-	}
-	
-	// Compare all the elements.
-	cmp = zip(a.lines, b.lines);
-	for(<l, r> <- cmp) {
-		if(l.line != r.line || !isEqualLineLocation(l@linelocation, r@linelocation) ) {
-			return false;
-		}
-	}
-	return true;
+
+public bool isIdenticalCF(CF a, CF b) =
+	isIdenticalCodelines(a.lines, b.lines);
+
+public bool isIdenticalCS(CS a, CS b) =
+    isIdenticalCodeblock(a.x, b.x) && isIdenticalCodeblock(a.y, b.y);
+
+public bool isIdenticalCodeblock(codeblock a, codeblock b) =
+    isIdenticalCodelines(a.lines, b.lines);
+
+public bool isIdenticalCodelines(list[codeline] a, list[codeline] b) {
+    if(size(a) != size(b)) return false;
+
+    cmp = zip(a, b);
+    for(<l, r> <- cmp) {
+        if(l.line != r.line || !isEqualLineLocation(l@linelocation, r@linelocation) ) {
+            return false;
+        }
+    }
+    return true;
 }
 
+
+public CSxy getCSxyFromCCCSByCFxy(CCCloneSections cccs, CFxy cf) {
+    for(cfcs <- cccs) {
+        if(isIdenticalCFxy(cfcs.cf, cf)) return cfcs.cs;
+    }
+}
 
 public bool isMirrorCFxy(CFxy a, CFxy b) {
 	return (isIdenticalCF(a.x, b.y) && isIdenticalCF(a.y, b.x));
