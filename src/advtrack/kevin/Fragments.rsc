@@ -96,12 +96,12 @@ public set[CFxy] matchFragments(list[CF] cl) {
 
 	// also match each fragment with itself to find duplication inside a single CF
 	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
+	//5599 here
 	
-	// use the set representation to get rid of the mirror and duplicate elements
-	set[CFxyComp] retComp = {toComp(z) | y <- x, z <- y};
-
-	// convert back to pair representation and discard identical blocks from within the same fragment
-	set[CFxy] ret = {fromComp(z) | z <- retComp, size(z.s) > 1};
+	// get rid of the duplicate elements
+	list[CFxy] ret = [z | y <- x, z <- y, !isIdenticalCF(z.x, z.y)];
+	// 4872 here
+	
 			
 	// create a map (size : CFxy) to speed up the rest of the computation
 	map[int, list[CFxy]] sortedRet = ( );
@@ -111,10 +111,10 @@ public set[CFxy] matchFragments(list[CF] cl) {
 	
 	// remove elements already contained in other elements
 	for (s <- sortedRet) 
-		for (k <- sortedRet && k < s) 
+		for (k <- sortedRet && k <= s) 
 			for (z <- sortedRet[s])
 				for (z1 <- sortedRet[k])
-					if (isSubCFxy(z1, z))
+					if (isSubCFxy(z1, z) && !isIdenticalCFxy(z1, z))
 						sortedRet[k] -= [z1];
 	
 	return {e | s <- sortedRet, e <- sortedRet[s]};	

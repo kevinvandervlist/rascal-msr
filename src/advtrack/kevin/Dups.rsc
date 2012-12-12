@@ -19,8 +19,8 @@ import advtrack::Constants;
 import IO;
 import util::ValueUI;
 
-//str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
-str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
+str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
+//str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.
@@ -36,23 +36,23 @@ private dupdict createLineMap(list[loc] files) {
 	set[location] init = {};
 	
 	for(file <- files) {
-		linesString = readFile(file);
+		lineList = readFileLines(file);
 		  // Normalize line breaks
-  	 	 linesString = replaceAll(linesString, "\r", "\n");
+  	 //	 linesString = replaceAll(linesString, "\r", "\n");
     
     	// Remove all comments and leading spaces
-    	while (/<x:\/\*.*?\*\/\s*|\/{2}.*?\s*?\n|\n\s+?>/s := linesString)
-        	linesString = replaceFirst(linesString, x, "\n");
+    //	while (/<x:\/\*.*?\*\/\s*|\/{2}.*?\s*?\n|\n\s+?>/s := linesString)
+     //   	linesString = replaceFirst(linesString, x, "\n");
     
     	// Remove all empty lines and closing curly braces
-    	lineList = split("\n", linesString);
-    	lineList = lineList - [x | x <- lineList, /^\s*\}*\s*$/ := x];	
+    //	lineList = split("\n", linesString);
+    //	lineList = lineList - [x | x <- lineList, /^\s*\}*\s*$/ := x];	
     	
 		int count = 0;
 
 		for(line <- lineList) {
-			lineLex = lexLine(line);
-			ret[lineLex]?init += { location(file, count) };
+			//lineLex = lexLine(line);
+			ret[line]?init += { location(file, count) };
 			count += 1;
 		}
 	}
@@ -103,7 +103,19 @@ public void main() {
 	
 	// Match fragments with each other to form clone classes
 	fragmentPairs = matchFragments(fragments);
-	text(fragmentPairs);
+	
+	println(size(fragmentPairs)); 
+	
+	for (fp <- fragmentPairs) {
+		fx = fp.x.file; 
+		lx = fp.x.lines;
+		fy = fp.y.file; 
+		ly = fp.y.lines;
+		println("<fx> at <head(lx)@linelocation.line> to <last(lx)@linelocation.line>");
+		println("<fy> at <head(ly)@linelocation.line> to <last(ly)@linelocation.line>");
+		println(" ");
+	}
+	
 	
 	// Create the clone classes from the mathed pairs
 	cloneClasses = createCloneClasses(fragmentPairs);
