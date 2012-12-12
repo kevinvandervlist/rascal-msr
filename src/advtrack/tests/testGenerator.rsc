@@ -13,7 +13,7 @@ import Map;
 import util::ValueUI;
 
 
-private loc tmpFile = |tmp:///rascal/advtrack/testFile|;
+public loc tmpFile = |tmp:///rascal/advtrack/testFile|;
 
 
 public codeline toCodeline(str line, loc file, int linenumber) =
@@ -32,7 +32,7 @@ public CF toCF(list[codeblock] cbs) =
     CF(cbs[0].lines[0] @ linelocation.file, [l | cb <- cbs, l <- cb.lines]);
 
 public int size(CF cf) =
-    last(cf.lines) @ linelocation.line - head(cf.lines) @ linelocation.line;
+    last(cf.lines) @ linelocation.line - head(cf.lines) @ linelocation.line + 1;
 
 public codeblock moveCodeblock(codeblock b, int n) =
     codeblock(
@@ -57,10 +57,9 @@ public list[codeblock] moveCodeblocksGapped(list[codeblock] blocks, int n) {
     for(i <- [0 .. size(blocks) - 1]) {
         b = blocks[i];
         currGap = 0;
-        println(b);
-        if(i > 0)
-            currGap = head(b.lines) @ linelocation.line -
-                last(blocks[i - 1].lines) @ linelocation.line;
+        if(i < size(blocks) - 1)
+            currGap = head(blocks[i + 1].lines) @ linelocation.line -
+                last(b.lines) @ linelocation.line - 1;
 
         newBlocks += moveCodeblock(b, n + offset);
         offset += randInt(1, GAP_SIZE) - currGap;
@@ -78,8 +77,11 @@ public list[codeblock] randSplitCodeblock(codeblock b) =
     splitCodeblock(b, randInt(1, size(b.lines) - 2), randInt(0, GAP_SIZE));
 
 public list[codeblock] splitCodeblocks(list[codeblock] cbs, int pos, int gap) {
-    largest = largestCodeblock(cbs);
-    return cbs - largest + splitCodeblock(largest, pos, gap);
+    largest = indexOf(cbs, largestCodeblock(cbs));
+    splitted = splitCodeblock(cbs[largest], pos, gap);
+    cbs[largest] = splitted[0];
+    cbs = insertAt(cbs, largest + 1, splitted[1]);
+    return cbs;
 }
 
 public codeblock largestCodeblock(list[codeblock] cbs) =
@@ -89,7 +91,7 @@ public codeblock largestCodeblock(list[codeblock] cbs) =
 public CCCloneSections generateCCCS() {
     cccs = [];
 
-    lipsumSize =6; //randInt(6, 10);
+    lipsumSize = 6; //randInt(6, 10);
     orig = [toCodeblock(getLipsum(lipsumSize), tmpFile, 0)];
     copy = [moveCodeblock(head(orig), /*randInt(BLOCK_SIZE, 12)*/6 + lipsumSize)];
 
@@ -139,7 +141,7 @@ public CC generateCC(CCCloneSections cccs){
 		}
 	}
 	
-	text(unique);
+	//text(unique);
 	return CC(unique);
 }
 
