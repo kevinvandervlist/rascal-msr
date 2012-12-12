@@ -1,6 +1,7 @@
 module advtrack::tests::testCC
 
 import advtrack::Datatypes;
+import advtrack::kevin::Dups;
 import advtrack::tests::testGenerator;
 
 import IO;
@@ -13,11 +14,12 @@ public bool testCC() {
     testccs = [generateCC(testcccs)];
     testfiles = [tmpFile];
 
-    //ccs = CloneClasses(testfiles);
-    ccs = testccs;
+    ccs = getCloneClasses(testfiles);
+    //ccs = testccs;
     for(testcf <- testccs[0].fragments) {
         if(size([x | x <- ccs[0].fragments, isIdenticalCF(x, testcf)]) == 0)
-            return false;
+            println("Did not find <testcf>");
+            //return false;
     }
     
     return true;
