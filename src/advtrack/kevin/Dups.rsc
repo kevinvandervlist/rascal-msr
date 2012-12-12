@@ -103,9 +103,8 @@ public void main() {
 	
 	// Match fragments with each other to form clone classes
 	fragmentPairs = matchFragments(fragments);
-	
-	println(size(fragmentPairs)); 
-	
+		
+	/*
 	for (fp <- fragmentPairs) {
 		fx = fp.x.file; 
 		lx = fp.x.lines;
@@ -115,7 +114,7 @@ public void main() {
 		println("<fy> at <head(ly)@linelocation.line> to <last(ly)@linelocation.line>");
 		println(" ");
 	}
-	
+	*/
 	
 	// Create the clone classes from the mathed pairs
 	cloneClasses = createCloneClasses(fragmentPairs);

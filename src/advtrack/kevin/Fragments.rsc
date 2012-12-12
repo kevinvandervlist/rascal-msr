@@ -92,32 +92,42 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
  * @param cl The list containing the code fragments to be matched.
  * @return set[CFxy] A set containing all matching pairs of code fragments
  */
-public set[CFxy] matchFragments(list[CF] cl) {
+public list[CFxy] matchFragments(list[CF] cl) {
 
 	// also match each fragment with itself to find duplication inside a single CF
 	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
-	//5599 here
-	
+
 	// get rid of the duplicate elements
 	list[CFxy] ret = [z | y <- x, z <- y, !isIdenticalCF(z.x, z.y)];
-	// 4872 here
-	
 			
 	// create a map (size : CFxy) to speed up the rest of the computation
 	map[int, list[CFxy]] sortedRet = ( );
 	list[CFxy] init = [];
 	for (z <- ret)
 		sortedRet[size(z.x.lines)]?init += [z];
-	
-	// remove elements already contained in other elements
+
+	// remove elements already contained in other elements and mirror elements
 	for (s <- sortedRet) 
-		for (k <- sortedRet && k <= s) 
+		for (k <- sortedRet && k < s) 
 			for (z <- sortedRet[s])
 				for (z1 <- sortedRet[k])
 					if (isSubCFxy(z1, z) && !isIdenticalCFxy(z1, z))
 						sortedRet[k] -= [z1];
 	
-	return {e | s <- sortedRet, e <- sortedRet[s]};	
+	
+	list[CFxy] retMirror = [e | s <- sortedRet, e <- sortedRet[s]];	
+	ret = [];
+	
+	for (z <- retMirror) {
+		bool found = false;
+		for (z1 <- ret && !found)
+			if (isMirrorCFxy(z, z1))
+				found = true;
+		if (!found)
+			ret += [z];
+	}
+
+	return ret;
 }
 
 
