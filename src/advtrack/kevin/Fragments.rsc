@@ -92,32 +92,43 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
  * @param cl The list containing the code fragments to be matched.
  * @return set[CFxy] A set containing all matching pairs of code fragments
  */
-public set[CFxy] matchFragments(list[CF] cl) {
+public list[CFxy] matchFragments(list[CF] cl) {
 
 	// also match each fragment with itself to find duplication inside a single CF
 	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
-	
-	// use the set representation to get rid of the mirror and duplicate elements
-	set[CFxyComp] retComp = {toComp(z) | y <- x, z <- y};
 
-	// convert back to pair representation and discard identical blocks from within the same fragment
-	set[CFxy] ret = {fromComp(z) | z <- retComp, size(z.s) > 1};
+	// get rid of the duplicate elements
+	list[CFxy] ret = [z | y <- x, z <- y, !isIdenticalCF(z.x, z.y)];
 			
 	// create a map (size : CFxy) to speed up the rest of the computation
 	map[int, list[CFxy]] sortedRet = ( );
 	list[CFxy] init = [];
 	for (z <- ret)
 		sortedRet[size(z.x.lines)]?init += [z];
-	
-	// remove elements already contained in other elements
+
+	// remove elements already contained in other elements 
 	for (s <- sortedRet) 
 		for (k <- sortedRet && k < s) 
 			for (z <- sortedRet[s])
 				for (z1 <- sortedRet[k])
-					if (isSubCFxy(z1, z))
+					if (isSubCFxy(z1, z) && !isIdenticalCFxy(z1, z))
 						sortedRet[k] -= [z1];
 	
-	return {e | s <- sortedRet, e <- sortedRet[s]};	
+	// make a list of all pairs including the mirror elements
+	list[CFxy] retMirror = [e | s <- sortedRet, e <- sortedRet[s]];	
+	ret = [];
+	
+	// construct a return list without the mirror elements
+	for (z <- retMirror) {
+		bool found = false;
+		for (z1 <- ret && !found)
+			if (isMirrorCFxy(z, z1))
+				found = true;
+		if (!found)
+			ret += [z];
+	}
+
+	return ret;
 }
 
 

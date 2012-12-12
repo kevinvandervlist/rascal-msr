@@ -121,10 +121,13 @@ public CSxy getCSxyFromCCCSByCFxy(CCCloneSections cccs, CFxy cf) {
     }
 }
 
+public bool isMirrorCFxy(CFxy a, CFxy b) {
+	return (isIdenticalCF(a.x, b.y) && isIdenticalCF(a.y, b.x));
+}
+
 
 public bool isIdenticalCFxy(CFxy a, CFxy b) {
-	return (isIdenticalCF(a.x, b.x) && isIdentical(a.y, b.y)) ||
-			    (isIdenticalCF(a.x, b.y) && isIdentical(a.y, b.x));
+	return (isIdenticalCF(a.x, b.x) && isIdenticalCF(a.y, b.y));
 }
 
 //check if pair a contains subfragments of pair b
