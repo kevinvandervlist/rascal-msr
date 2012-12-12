@@ -11,6 +11,7 @@ import resource::versions::git::Git;
 import advtrack::Datatypes;
 import advtrack::kevin::Fragments;
 import advtrack::kevin::Classes;
+import advtrack::kevin::Sections;
 import advtrack::kevin::Filenames;
 import advtrack::kevin::Git;
 import advtrack::kevin::lexer::Lexer;
@@ -73,9 +74,6 @@ private dupdict stripSingles(dupdict dict) {
 /**
  * Test main stuff.
  */
- 
- 
- 
  public list[CC] getCloneClasses(list[loc] fileList) {
  
  	// Create a map with all duplicate occurences.
@@ -131,5 +129,12 @@ public void main() {
 	fileList = stripFileExtension(".class", fileList);
 	
 	cc = getCloneClasses(fileList);
+	
+	list[CCCloneSections] sec = [];
+	
+	for (c <- cc) 
+		sec += [getCCCloneSections(c)];
+	
+	text(sec);
 
 }
