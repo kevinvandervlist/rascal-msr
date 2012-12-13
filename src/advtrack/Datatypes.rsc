@@ -119,6 +119,7 @@ public CSxy getCSxyFromCCCSByCFxy(CCCloneSections cccs, CFxy cf) {
     for(cfcs <- cccs) {
         if(isIdenticalCFxy(cfcs.cf, cf)) return cfcs.cs;
     }
+    return CSxy({});
 }
 
 public bool isMirrorCFxy(CFxy a, CFxy b) {

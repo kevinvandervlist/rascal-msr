@@ -67,6 +67,45 @@ public list[codeblock] moveCodeblocksGapped(list[codeblock] blocks, int n) {
     return newBlocks;
 }
 
+
+/**
+given a list of code blocks belonging to a single clone fragment,
+translate each block, such that its minimum offset is at least n greater than end
+of last line of previous. Also add random gaps to given blocks.  
+*
+public list[codeblock] moveCodeblocksGapped2(list[codeblock] blocks, int n) {
+    //get last line of last code block
+    int lastine = last(last(blocks).lines) @ linelocation.line + 1;
+    int linecount = lastline - head(head(blocks).lines) @ linelocation.line;
+    
+    //start of next fragment is at least GAP_SIZE+1 lines after end of last fragment
+    int translateFragment = linecount + GAP_SIZE + randInt(1, 5);
+ 
+    //make sure all new fragments'  blocks are at least GAP_SIZE+1 lines 
+    //away from their last position
+    translatedBlocks = moveCodeBlocks(blocks, translateFragment);
+    
+    //the offset wil be used to count the number of new lines of gaps introduced/removed
+    /offset must always be between [0, GAP_SIZE]
+    int offset = 0;
+    
+    previousBlock = null;
+    
+    for(currentBlock <- blocks){
+            int gap = randInt(0, GAP_SIZE);
+            int currentGap = 0;
+            
+            if(previousBlock != null){
+                currentGap = head(currentBlock.lines) @ linelocation.line - 
+                                    last(previousBlock.lines) @ linelocation.line; 
+            }
+            
+            int newGap = gap - currentGap;
+            offset += newGap;
+    }
+}*/
+
+
 public list[codeblock] splitCodeblock(codeblock b, int pos, int gap) =
     [
         codeblock(take(pos, b.lines), b.begin),
@@ -90,7 +129,6 @@ public codeblock largestCodeblock(list[codeblock] cbs) =
 
 public CCCloneSections generateCCCS() {
     cccs = [];
-
     lipsumSize = randInt(6, 10);
     orig = [toCodeblock(getLipsum(lipsumSize), tmpFile, 0)];
     copy = [moveCodeblock(head(orig), randInt(BLOCK_SIZE, 12) + lipsumSize)];
@@ -98,6 +136,7 @@ public CCCloneSections generateCCCS() {
     for(i <- [0 .. 3]) {
         cfx = toCF(orig);
         cfy = toCF(copy);
+        assert size(cfx) + size(cfy) + 6 <= last(cfy.lines) @ linelocation.line - head(cfx.lines) @ linelocation.line + 1;
         
         csxy = CSxy({ CS(orig[j], copy[j]) | j <- [0 .. size(orig) - 1] });
         cfxy = CFxy(cfx, cfy);
@@ -105,7 +144,7 @@ public CCCloneSections generateCCCS() {
 
         splitAt = randInt(1, size(largestCodeblock(copy).lines) - 1);
         orig = splitCodeblocks(copy, splitAt, 0);
-        copy = moveCodeblocksGapped(orig, randInt(BLOCK_SIZE, 12) + size(cfx));
+        copy = moveCodeblocksGapped(orig, randInt(BLOCK_SIZE, 12) + size(cfy));
     }
 
     //text(cccs);

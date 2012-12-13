@@ -4,7 +4,7 @@ import String;
 import util::Math;
 
 
-public void seed(int val) =
+public real seed(int val) =
     arbSeed(val);
 
 
@@ -22,10 +22,10 @@ public int randInt() =
     arbInt();
 
 public int randInt(int max) =
-    max;//arbInt(max + 1);
+    arbInt(max + 1);
 
 public int randInt(int min, int max) =
-    min;//min + arbInt(max - min + 1);
+    min + arbInt(max - min + 1);
 
 
 public bool randBool() =
