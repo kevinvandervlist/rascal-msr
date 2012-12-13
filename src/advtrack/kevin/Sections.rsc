@@ -42,7 +42,7 @@ public CCCloneSections getCCCloneSections(CC class) {
 private CSxy getSections(CFxy current) {
 	set[CS] sections = {};
 	
-	int s = size(current.x.lines) -1 ;
+	int s = size(current.x.lines);
 	bool restart = true;
 	codeblock a = codeblock([], 0);
 	codeblock b = codeblock([], 0);
@@ -67,7 +67,9 @@ private CSxy getSections(CFxy current) {
 		}
 		i += 1;
 	}
-		
+	
+    if(!isEmpty(a.lines))
+        sections += {CS(a, b)};
 	
 	return CSxy(sections);
 }

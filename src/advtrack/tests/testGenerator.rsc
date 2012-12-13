@@ -209,8 +209,6 @@ void outputToFile(loc file, list[str] lines){
 
 	int writenr = 0;
 	
-	println("GALLE");
-	
 	for(line <- lines){
 	
 		if(writenr == 0)
