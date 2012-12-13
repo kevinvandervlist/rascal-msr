@@ -62,12 +62,12 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
 	for(x <- lst) {
 		// Same file, in block threshold?
 		if(	(x.l.file == prev.file) &&
-			((prev.line + GAP_SIZE) >= x.l.line)) {
+			((prev.line + GAP_SIZE) > x.l.line)) {
 			block_size += 1;
 			buf += x;
 		} else {
 			// Different file or gap check failed, reset counter stuff and possibly add to ret
-			if((buf != {}) && (block_size >= BLOCK_SIZE)) {
+			if((buf != {}) && (block_size > BLOCK_SIZE)) {
 				ret += [CF(prev.file, [ e | el <- sort(buf), e := codeline(el.s)[@linelocation=el.l]])];
 			}
 			block_size = 0;
