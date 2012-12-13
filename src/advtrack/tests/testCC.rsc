@@ -12,7 +12,7 @@ import util::ValueUI;
 public bool testCC() {
     testcccs = generateCCCS();
     testccs = [generateCC(testcccs)];
-    testfiles = [tmpFile];
+    testfiles = [|tmp:///rascal/advtrack/testFile2|];
 
     ccs = getCloneClasses(testfiles);
     

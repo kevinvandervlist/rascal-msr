@@ -67,10 +67,10 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
 			buf += x;
 		} else {
 			// Different file or gap check failed, reset counter stuff and possibly add to ret
-			if((buf != {}) && (block_size > BLOCK_SIZE)) {
+			if((buf != {}) && (block_size >= BLOCK_SIZE)) {
 				ret += [CF(prev.file, [ e | el <- sort(buf), e := codeline(el.s)[@linelocation=el.l]])];
 			}
-			block_size = 0;
+			block_size = 1;
 			buf = {x};
 		}
 		// Set the previous location.
@@ -93,7 +93,6 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
  * @return set[CFxy] A set containing all matching pairs of code fragments
  */
 public list[CFxy] matchFragments(list[CF] cl) {
-    text(cl);
 	// also match each fragment with itself to find duplication inside a single CF
 	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
 
