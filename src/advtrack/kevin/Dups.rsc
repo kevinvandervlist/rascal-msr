@@ -20,8 +20,8 @@ import advtrack::Constants;
 import IO;
 import util::ValueUI;
 
-str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
-//str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
+//str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
+str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.
@@ -50,9 +50,14 @@ private dupdict createLineMap(list[loc] files) {
     //	lineList = lineList - [x | x <- lineList, /^\s*\}*\s*$/ := x];	
     	
 		int count = 0;
-
+		// Lex the file:
+		//lineListLexed = lexLineList(lineList);
+		//for(line <- lineListLexed) {
 		for(line <- lineList) {
+			//println("O: <line>");
 			//lineLex = lexLine(line);
+			//println("N: <lineLex>");
+			//ret[lineLex]?init += { location(file, count) };
 			ret[line]?init += { location(file, count) };
 			count += 1;
 		}
