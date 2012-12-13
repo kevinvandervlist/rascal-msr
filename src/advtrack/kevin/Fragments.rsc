@@ -93,7 +93,7 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
  * @return set[CFxy] A set containing all matching pairs of code fragments
  */
 public list[CFxy] matchFragments(list[CF] cl) {
-
+    text(cl);
 	// also match each fragment with itself to find duplication inside a single CF
 	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
 

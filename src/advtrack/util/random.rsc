@@ -22,10 +22,10 @@ public int randInt() =
     arbInt();
 
 public int randInt(int max) =
-    arbInt(max + 1);
+    max;//arbInt(max + 1);
 
 public int randInt(int min, int max) =
-    min + arbInt(max - min + 1);
+    min;//min + arbInt(max - min + 1);
 
 
 public bool randBool() =
