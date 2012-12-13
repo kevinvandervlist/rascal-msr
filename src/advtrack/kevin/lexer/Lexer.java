@@ -87,6 +87,7 @@ public class Lexer {
         	}
         	
         	buf.append(applyRewriteRules(token));
+        	buf.append(" ");
         	
         	// Make sure to update the counters
         	curline = cl;
@@ -107,7 +108,21 @@ public class Lexer {
 	 */
 	
 	private String applyRewriteRules(Token token) {
-		return token.getText();
+       	if(token.getType() == JavaLexer.IDENTIFIER) {
+       		// Parameter replacement:
+       		return "$p";
+       	} else if(token.getType() == JavaLexer.PACKAGE) {
+       		// RJ1: remove package names
+       		return "";
+       	} else if (	(token.getType() == JavaLexer.PUBLIC) ||
+       				(token.getType() == JavaLexer.PROTECTED) ||
+       				(token.getType() == JavaLexer.PRIVATE)) {
+       		return "";
+       		// RJ2: remove accessibility keyword
+       	} else {
+       		// Other cases
+			return token.getText();
+       	}
 	}
 
 	/**

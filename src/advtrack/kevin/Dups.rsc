@@ -37,27 +37,18 @@ private dupdict createLineMap(list[loc] files) {
 	set[location] init = {};
 	
 	for(file <- files) {
-		lineList = readFileLines(file);
-		  // Normalize line breaks
-  	 //	 linesString = replaceAll(linesString, "\r", "\n");
-    
-    	// Remove all comments and leading spaces
-    //	while (/<x:\/\*.*?\*\/\s*|\/{2}.*?\s*?\n|\n\s+?>/s := linesString)
-     //   	linesString = replaceFirst(linesString, x, "\n");
-    
-    	// Remove all empty lines and closing curly braces
-    //	lineList = split("\n", linesString);
-    //	lineList = lineList - [x | x <- lineList, /^\s*\}*\s*$/ := x];	
+		/*
+		 * Lex files to rewrite identifiers and remove comments and 
+		 * leading / trailing / intermediate whitespace.
+		 */
+		lineList = lexFile(file);
+		//println("File: <file>, size: <size(lineList)>");
+		//for( l <- lineList) {
+		//	println(l);
+		//}
     	
 		int count = 0;
-		// Lex the file:
-		//lineListLexed = lexLineList(lineList);
-		//for(line <- lineListLexed) {
 		for(line <- lineList) {
-			//println("O: <line>");
-			//lineLex = lexLine(line);
-			//println("N: <lineLex>");
-			//ret[lineLex]?init += { location(file, count) };
 			ret[line]?init += { location(file, count) };
 			count += 1;
 		}
@@ -130,8 +121,7 @@ public void main() {
 	m = cunit(branch("master"));
 	fileList = getFilesFromCheckoutUnit(m, repo);
 	
-	// Remove files that end with a class extension
-	fileList = stripFileExtension(".class", fileList);
+	fileList = filterFilesByExtension(".java", fileList);
 	
 	cc = getCloneClasses(fileList);
 	
@@ -141,5 +131,4 @@ public void main() {
 		sec += [getCCCloneSections(c)];
 	
 	text(sec);
-
 }
