@@ -42,16 +42,6 @@ public class Lexer {
 			IList retl = this.valueFactory.list();
 			retl.append(this.valueFactory.string("WTF"));
 
-			/*
-			for(int i = 0; i < list.size(); i++) {
-				retl.append(this.valueFactory.string(list.get(i)));
-			}
-			
-			for(int i = 0; i < 10; i++) {
-				retl.append(this.valueFactory.string(list.get(i)));
-			}
-			*/
-			
 			while(it.hasNext()) {
 				IString cur = this.valueFactory.string(it.next());
 				retl = retl.append(cur);
