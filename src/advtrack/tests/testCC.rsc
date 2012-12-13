@@ -12,7 +12,7 @@ import util::ValueUI;
 public bool testCC() {
     testcccs = generateCCCS();
     testccs = [generateCC(testcccs)];
-    testfiles = [|tmp:///rascal/advtrack/testFile2|];
+    testfiles = [tmpFile];
 
     ccs = getCloneClasses(testfiles);
     
@@ -21,8 +21,8 @@ public bool testCC() {
     //ccs = testccs;
     for(testcf <- testccs[0].fragments) {
         if(size([x | x <- ccs[0].fragments, isIdenticalCF(x, testcf)]) == 0)
-            text(testcf);
-            //return false;
+            //text(testcf);
+            return false;
     }
     
     return true;

@@ -90,8 +90,6 @@ private dupdict stripSingles(dupdict dict) {
 	// Create a list of code fragments for further analysis.
 	fragments = createCodeFragments(occurences);
 	
-	text(fragments);
-	
 	// Match fragments with each other to form clone classes
 	fragmentPairs = matchFragments(fragments);
 		
