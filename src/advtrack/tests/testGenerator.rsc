@@ -91,9 +91,9 @@ public codeblock largestCodeblock(list[codeblock] cbs) =
 public CCCloneSections generateCCCS() {
     cccs = [];
 
-    lipsumSize = 6; //randInt(6, 10);
+    lipsumSize = randInt(6, 10);
     orig = [toCodeblock(getLipsum(lipsumSize), tmpFile, 0)];
-    copy = [moveCodeblock(head(orig), /*randInt(BLOCK_SIZE, 12)*/6 + lipsumSize)];
+    copy = [moveCodeblock(head(orig), randInt(BLOCK_SIZE, 12) + lipsumSize)];
 
     for(i <- [0 .. 3]) {
         cfx = toCF(orig);
@@ -105,7 +105,7 @@ public CCCloneSections generateCCCS() {
 
         splitAt = randInt(1, size(largestCodeblock(copy).lines) - 1);
         orig = splitCodeblocks(copy, splitAt, 0);
-        copy = moveCodeblocksGapped(orig, /*randInt(BLOCK_SIZE, 12)*/6 + size(cfx));
+        copy = moveCodeblocksGapped(orig, randInt(BLOCK_SIZE, 12) + size(cfx));
     }
 
     //text(cccs);
