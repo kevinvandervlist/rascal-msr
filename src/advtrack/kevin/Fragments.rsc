@@ -62,7 +62,7 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
 	for(x <- lst) {
 		// Same file, in block threshold?
 		if(	(x.l.file == prev.file) &&
-			((prev.line + GAP_SIZE) > x.l.line)) {
+			((prev.line + GAP_SIZE + 1) >= x.l.line)) {
 			block_size += 1;
 			buf += x;
 		} else {
@@ -93,7 +93,7 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
  * @return set[CFxy] A set containing all matching pairs of code fragments
  */
 public list[CFxy] matchFragments(list[CF] cl) {
-
+    text(cl);
 	// also match each fragment with itself to find duplication inside a single CF
 	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
 
@@ -216,7 +216,7 @@ list[set[int]] filterOut(list[int] indexing) {
 	set[int] buf = {};
 	
 	for  (i <- [0..s-2]) {
-		if (indexing[i+1] - indexing[i] > GAP_SIZE) {  			
+		if (indexing[i+1] - indexing[i] - 1 > GAP_SIZE) {  			
 			buffer += buf;
 			buf = {};
 		} else {

@@ -142,7 +142,9 @@ public CC generateCC(CCCloneSections cccs){
 	}
 	
 	//text(unique);
-	return CC(unique);
+	cc = CC(unique);
+	generateFiles(cc);
+	return cc;
 }
 
 
@@ -186,13 +188,13 @@ public list[str] fillFileLines(list[codeline] clonedlines){
 		int linesofnoise = clonedlinenumber - currentlinenumber;
 		
 		if(linesofnoise > 1)
-			result += getNoise(linesofnoise-1);
+			result += getNextNoise(linesofnoise-1);
 		
 		result +=  clonedline.line;
 		currentlinenumber = clonedlinenumber;
 	}
 	
-	result += getNoise(randInt(0, 10));
+	result += getNextNoise(randInt(0, 10));
 	
 	return result;
 }
@@ -206,6 +208,8 @@ even though the documentation says it does
 void outputToFile(loc file, list[str] lines){
 
 	int writenr = 0;
+	
+	println("GALLE");
 	
 	for(line <- lines){
 	
