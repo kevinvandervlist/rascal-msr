@@ -55,6 +55,11 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
 	rel[location l, str s] buf = {};
 	list[CF] ret = [];
 	
+	// Does the list contain elements at all?
+	if(lst == []) {
+		return ret;
+	}
+	
 	// Set the current file
 	location prev = head(lst).l;
 	int block_size = 0;
