@@ -21,8 +21,9 @@ import IO;
 import util::ValueUI;
 
 //str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
-str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
+//str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
+str gitLoc = "/home/kevin/src/argouml/";
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.
@@ -43,16 +44,24 @@ private dupdict createLineMap(list[loc] files) {
 		 * leading / trailing / intermediate whitespace.
 		 * The lexer is able to detect if and how to lex a file.
 		 */
-		lineList = lexFile(file);
-		//println("File: <file>, size: <size(lineList)>");
-		//for( l <- lineList) {
-		//	println(l);
-		//}
-    	
-		int count = 0;
-		for(line <- lineList) {
-			ret[line]?init += { location(file, count) };
-			count += 1;
+		
+		// Rascal apparantly has a bug with filenames with curlys in them or something.
+		if(exists(file)) {
+			lineList = lexFile(file);
+			
+			//println("File: <file>, size: <size(lineList)>");
+			//for( l <- lineList) {
+			//	println(l);
+			//}
+	    	
+			int count = 0;
+			
+			for(line <- lineList) {
+				ret[line]?init += { location(file, count) };
+				count += 1;
+			}			
+		} else {
+			println("File <file> does not exist!");
 		}
 	}
 
@@ -134,8 +143,9 @@ public void main() {
 	m = cunit(branch("master"));
 	fileList = getFilesFromCheckoutUnit(m, repo);
 	
-	fileList = removeByFileExtension(".class", fileList);
-	//fileList = getByFileExtension(".java", fileList);
+	// Filter file extensions
+	//fileList = removeByFileExtension(".class", fileList);
+	fileList = getByFileExtension(".java", fileList);
 	
 	cc = getCloneClasses(fileList);
 	

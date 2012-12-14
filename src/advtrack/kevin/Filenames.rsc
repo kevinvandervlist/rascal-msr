@@ -21,6 +21,6 @@ public list[loc] removeByFileExtension(str ext, list[loc] files) {
  * @return list[loc] A list of files with the given extension.
  */
 
-public list[loc] getFilesByExtension(str ext, list[loc] files) {
+public list[loc] getByFileExtension(str ext, list[loc] files) {
 	return [ x | x <- files, isFileType(ext, x)];
 }
