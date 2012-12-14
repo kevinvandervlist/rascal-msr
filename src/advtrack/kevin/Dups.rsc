@@ -8,23 +8,24 @@ import String;
 import resource::versions::Versions;
 import resource::versions::git::Git;
 
-import advtrack::Datatypes;
-import advtrack::kevin::Fragments;
-import advtrack::kevin::Classes;
-import advtrack::kevin::Sections;
-import advtrack::kevin::Filenames;
-import advtrack::kevin::Git;
-import advtrack::kevin::lexer::Lexer;
 import advtrack::Constants;
+import advtrack::Datatypes;
+import advtrack::kevin::Classes;
+import advtrack::kevin::Filenames;
+import advtrack::kevin::Fragments;
+import advtrack::kevin::Git;
+import advtrack::kevin::GitHelper;
+import advtrack::kevin::Sections;
+import advtrack::kevin::lexer::Lexer;
 
 import IO;
 import DateTime;
 import util::ValueUI;
 
 //str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
-//str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
+str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
-str gitLoc = "/home/kevin/src/argouml/";
+//str gitLoc = "/home/kevin/src/argouml/";
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.
@@ -124,9 +125,54 @@ private dupdict removeEmptyLines(dupdict dict) {
 	
 	return cloneClasses;
  
- }
- 
- 
+}
+
+/**
+ * A test to see wether we can do something with history over time...
+ */
+
+public void getCCCloneSectionsOverTime() {
+	list[tuple[CheckoutUnit cu, list[CCCloneSections] cccs]] cccsOverTime = [];
+	
+	con = fs(gitLoc);
+	set[LogOption] opt = {reverse()};
+	repo = git(con, "", opt);
+	cs = getChangesets(repo);
+	
+	// Get all CheckoutUnits of the current repo:
+	revs = getRevisions(cs);
+	cu = getCheckoutUnits(revs);
+
+	// Check out all the revisions in succesion...	
+	println("Starting analyzing <size(cu)> CheckoutUnits @ <printTime(now(), "HH:mm:ss")>");
+
+	int x = 1;
+	for(c <- cu) {
+		println("CheckoutUnit <x>...");
+		x += 1;
+		
+		fileList = getFilesFromCheckoutUnit(c, repo);
+		
+		fileList = getByFileExtension(".java", fileList);
+		
+		cc = getCloneClasses(fileList);
+		println("getCloneClasses() @ <printTime(now(), "HH:mm:ss")>");
+
+		list[CCCloneSections] sec = [];
+		
+		for (cx <- cc) 
+			sec += [getCCCloneSections(cx)];
+		
+		println("getCCCloneSections() @ <printTime(now(), "HH:mm:ss")>");
+		cccsOverTime += <c, sec>;
+	}
+	// Restore the state to the master branch
+	master = cunit(branch("master"));
+	checkoutResources(master, repo);
+	
+	println("Done with <size(cccsOverTime)> revisions @ <printTime(now(), "HH:mm:ss")>");
+	text(cccsOverTime);
+} 
  
 
 public void main() {
