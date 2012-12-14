@@ -3,6 +3,9 @@ module advtrack::Datatypes
 import List;
 import Set;
 
+import resource::versions::Versions;
+import resource::versions::git::Git;
+
 // location of a line from a source file
 data location = location(loc file, int line);
 
@@ -53,6 +56,10 @@ alias CCCloneSections = list[CFxyCSxy sections];
 
 //a file
 data File = File(loc filelocation, list[str] lines);
+
+// Model that can be used to store data of revisions over time
+// CCCloneSections and CheckoutUnit
+data Generation = Generation(CheckoutUnit cu, list[CCCloneSections cccs]);
 
 /**
  * Are two CFs equal?

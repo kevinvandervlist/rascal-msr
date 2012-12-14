@@ -1,7 +1,24 @@
-module advtrack::kevin::GitHelper
+module advtrack::kevin::Util
+
+import IO;
+import ValueIO;
 
 import resource::versions::Versions;
 import resource::versions::git::Git;
+
+import advtrack::Datatypes;
+
+public void writeGenerationsToFile(list[Generation] gens, loc dst) {
+	writeBinaryValueFile(dst, gens);
+}
+
+public list[Generation] readGenerationsFromFile(loc src) {
+	if(exists(src)) {
+        return readBinaryValueFile(#list[Generation], src);
+    } else {
+    	return [];
+    }
+}
 
 /**
  * Create a list of revisions based on a given list of changesets.

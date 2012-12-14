@@ -14,12 +14,12 @@ import advtrack::kevin::Classes;
 import advtrack::kevin::Filenames;
 import advtrack::kevin::Fragments;
 import advtrack::kevin::Git;
-import advtrack::kevin::GitHelper;
 import advtrack::kevin::Sections;
+import advtrack::kevin::Util;
 import advtrack::kevin::lexer::Lexer;
 
-import IO;
 import DateTime;
+import IO;
 import util::ValueUI;
 
 //str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
@@ -132,7 +132,7 @@ private dupdict removeEmptyLines(dupdict dict) {
  */
 
 public void getCCCloneSectionsOverTime() {
-	list[tuple[CheckoutUnit cu, list[CCCloneSections] cccs]] cccsOverTime = [];
+	list[Generation] generations = [];
 	
 	con = fs(gitLoc);
 	set[LogOption] opt = {reverse()};
@@ -142,7 +142,10 @@ public void getCCCloneSectionsOverTime() {
 	// Get all CheckoutUnits of the current repo:
 	revs = getRevisions(cs);
 	cu = getCheckoutUnits(revs);
-
+	
+	// Limit to last 3 revisions.
+	cu = tail(cu, 3);
+	
 	// Check out all the revisions in succesion...	
 	println("Starting analyzing <size(cu)> CheckoutUnits @ <printTime(now(), "HH:mm:ss")>");
 
@@ -164,16 +167,19 @@ public void getCCCloneSectionsOverTime() {
 			sec += [getCCCloneSections(cx)];
 		
 		println("getCCCloneSections() @ <printTime(now(), "HH:mm:ss")>");
-		cccsOverTime += <c, sec>;
+		generations += Generation(c, sec);
 	}
 	// Restore the state to the master branch
 	master = cunit(branch("master"));
 	checkoutResources(master, repo);
 	
-	println("Done with <size(cccsOverTime)> revisions @ <printTime(now(), "HH:mm:ss")>");
-	text(cccsOverTime);
-} 
- 
+	println("Done with <size(generations)> revisions @ <printTime(now(), "HH:mm:ss")>");
+	text(generations);
+	
+	loc wrt = |tmp:///generations_dump/|;
+	println("Dump written to <wrt>.");
+	writeGenerationsToFile(generations, wrt);
+}
 
 public void main() {
 	println("Start @ <printTime(now(), "HH:mm:ss")>");
