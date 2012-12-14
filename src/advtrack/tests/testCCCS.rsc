@@ -1,7 +1,7 @@
 module advtrack::tests::testCCCS
 
 import advtrack::Datatypes;
-import advtrack::random;
+import advtrack::util::random;
 import advtrack::kevin::Dups;
 import advtrack::kevin::Sections;
 import advtrack::tests::testGenerator;

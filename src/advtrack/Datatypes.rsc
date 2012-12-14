@@ -84,6 +84,15 @@ public bool isEqualCF(CF a, CF b) {
 }
 
 
+public list[CF] CFsWithLoc(loc l, list[CC] ccs) =
+	[cf | cc <- ccs, cf <- cc.fragments, cf.file == l];
+
+
+public CC getCC(CF cf, list[CC] ccs) {
+	for(cc <- ccs){ for(fragment <- cc.fragments) { if(cf == fragment) { return cc; } } }
+}
+
+
 public bool isEqualLineLocation(location a, location b){
 	return a.file == b.file && a.line == b.line;
 }
