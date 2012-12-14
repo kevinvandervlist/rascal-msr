@@ -43,10 +43,10 @@ private dupdict createLineMap(list[loc] files) {
 		 * The lexer is able to detect if and how to lex a file.
 		 */
 		lineList = lexFile(file);
-		println("File: <file>, size: <size(lineList)>");
-		for( l <- lineList) {
-			println(l);
-		}
+		//println("File: <file>, size: <size(lineList)>");
+		//for( l <- lineList) {
+		//	println(l);
+		//}
     	
 		int count = 0;
 		for(line <- lineList) {
@@ -69,6 +69,14 @@ private dupdict stripSingles(dupdict dict) {
 }
 
 /**
+ * All the lines from the map that only consist of an empty line
+ */
+
+private dupdict removeEmptyLines(dupdict dict) {
+	return (key : dict[key] | key <- dict, key != "");
+}
+
+/**
  * Test main stuff.
  */
  public list[CC] getCloneClasses(list[loc] fileList) {
@@ -78,6 +86,9 @@ private dupdict stripSingles(dupdict dict) {
 	
 	// Filter the strings that occur only once.
 	occurences = stripSingles(dup_occurences);
+	
+	// Remove whitespace? By doing so, it is blazingly fast.
+	occurences = removeEmptyLines(dup_occurences);
 
 	// Create a list of code fragments for further analysis.
 	fragments = createCodeFragments(occurences);

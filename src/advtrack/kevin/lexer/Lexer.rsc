@@ -16,12 +16,9 @@ public str lexLine(str rawline) {
 }
 
 public list[str] lexFile(loc file) {
-	println("File: <file>");
 	if(isFileType("java", file)) {
-		println("Java");
 		return lexJavaFile(file);
 	} else {
-		println("Other");
 		return readFileLines(file); 
 	}
 }
