@@ -44,11 +44,10 @@ private dupdict createLineMap(list[loc] files) {
 		 * The lexer is able to detect if and how to lex a file.
 		 */
 		lineList = lexFile(file);
-		println("File: <file>, size: <size(lineList)>");
-		for( l <- lineList) {
-			println(l);
-		
-		}
+		//println("File: <file>, size: <size(lineList)>");
+		//for( l <- lineList) {
+		//	println(l);
+		//}
     	
 		int count = 0;
 		for(line <- lineList) {
