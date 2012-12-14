@@ -22,6 +22,7 @@ import util::ValueUI;
 
 //str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
 str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
+//str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.
@@ -43,10 +44,11 @@ private dupdict createLineMap(list[loc] files) {
 		 * The lexer is able to detect if and how to lex a file.
 		 */
 		lineList = lexFile(file);
-		//println("File: <file>, size: <size(lineList)>");
-		//for( l <- lineList) {
-		//	println(l);
-		//}
+		println("File: <file>, size: <size(lineList)>");
+		for( l <- lineList) {
+			println(l);
+		
+		}
     	
 		int count = 0;
 		for(line <- lineList) {

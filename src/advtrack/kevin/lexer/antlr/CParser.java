@@ -1,3 +1,5 @@
+package advtrack.kevin.lexer.antlr;
+
 // $ANTLR 3.4 /home/kevin/todo/C.g 2012-12-14 08:51:24
 
 import java.util.Set;

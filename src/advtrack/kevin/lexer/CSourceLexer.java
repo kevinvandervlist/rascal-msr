@@ -10,25 +10,21 @@ import org.eclipse.imp.pdb.facts.*;
 
 import advtrack.kevin.lexer.antlr.*;
 
-public class JavaSourceLexer {
+public class CSourceLexer {
 	private final IValueFactory valueFactory;
 	
-	public JavaSourceLexer(IValueFactory valueFactory) {
+	public CSourceLexer(IValueFactory valueFactory) {
 		this.valueFactory = valueFactory;
 	}
 	
-	public IString lexJavaLine(IString rawline) {
-		return this.valueFactory.string(lexer(rawline.getValue()));
-	}
-	
-	public IValue lexJavaFile(ISourceLocation sloc) {
+	public IValue lexCFile(ISourceLocation sloc) {
 		CharStream cs = null;
 		List<String> list = null;
 		
 		try {
 			cs = new ANTLRFileStream(sloc.getURI().getPath());
 			
-			JavaLexer lexer = new JavaLexer(cs);
+			CLexer lexer = new CLexer(cs);
 			
 			list = tokenizeSourceFile(lexer);
 		} catch (IOException e) {
@@ -60,7 +56,7 @@ public class JavaSourceLexer {
 	 * @return
 	 */
 	
-	private List<String> tokenizeSourceFile(JavaLexer lexer) {
+	private List<String> tokenizeSourceFile(CLexer lexer) {
 		CommonTokenStream tokens = new CommonTokenStream();
 		List<String> lines = new ArrayList<String>();
 		
@@ -73,11 +69,11 @@ public class JavaSourceLexer {
         Token token = lexer.nextToken();
 
         // Create a list of lines, where tokens correspond to the original source file.
-        while(token.getType() != JavaLexer.EOF) {
+        while(token.getType() != CLexer.EOF) {
         	int cl = token.getLine();
         	
         	if (cl == (prevline + 1) || curline != cl) {
-        		lines.add(buf.toString());
+        		lines.add(removeContainingNewLines(buf.toString()));
         		if (curline != cl) {
         			int diff = cl - prevline - 1;
         			for(int i = 0; i < diff; i++) {
@@ -97,11 +93,15 @@ public class JavaSourceLexer {
         	token = lexer.nextToken();
         }
         
-        lines.add(buf.toString());
+        lines.add(removeContainingNewLines(buf.toString()));
 
         return lines;
 	}
 	
+	private String removeContainingNewLines(String string) {
+		return string.replaceAll("[\n]", "");
+	}
+
 	/**
 	 * Call the rewrit rules that are needed for the current token.
 	 * @param token
@@ -109,64 +109,22 @@ public class JavaSourceLexer {
 	 */
 	
 	private String applyRewriteRules(Token token) {
-       	if(token.getType() == JavaLexer.IDENTIFIER) {
+       	if(token.getType() == CLexer.IDENTIFIER) {
        		// Parameter replacement:
        		return "$p";
-       	} else if(token.getType() == JavaLexer.PACKAGE) {
-       		// RJ1: remove package names
+       	} else if (token.getType() == CLexer.WS) {
+       		// Do nothing with whitespace
        		return "";
-       	} else if (	(token.getType() == JavaLexer.PUBLIC) ||
-       				(token.getType() == JavaLexer.PROTECTED) ||
-       				(token.getType() == JavaLexer.PRIVATE)) {
+       	} else if (	(token.getType() == CLexer.COMMENT) ||
+       				(token.getType() == CLexer.LINE_COMMENT)) {
+       		// Ignore comments as well.
        		return "";
-       		// RJ2: remove accessibility keyword
-       	} else {
+       	} else if (token.getType() == CLexer.LINE_COMMAND) {
+       		// Preprocesser commands
+       		return token.getText();
+	    } else {
        		// Other cases
 			return token.getText();
        	}
-	}
-
-	/**
-	 * This function takes a string from a Java source file, and then
-	 * lexes it according to the Java grammar.
-	 * Extra steps like rewriting can be included.
-	 * @param line A raw line from the source file being read. 
-	 * @return String A string containing just the lexed symbols.
-	 */
-	
-	public String lexer(String line) {
-		CharStream cs = new ANTLRStringStream(line);
-			
-		JavaLexer lexer = new JavaLexer(cs);
-			
-		CommonTokenStream tokens = new CommonTokenStream();
-		tokens.setTokenSource(lexer);
-		
-        StringBuffer buf = new StringBuffer();
-        
-        Token token = lexer.nextToken();
-        
-        while(token.getType() != JavaLexer.EOF) {
-        	// TODO: RJ2
-        	if(token.getType() == JavaLexer.IDENTIFIER) {
-        		// Parameter replacement:
-        		buf.append("$p ");
-        	} else if(token.getType() == JavaLexer.PACKAGE) {
-        		// RJ1: remove package names
-        	} else if (	(token.getType() == JavaLexer.PUBLIC) ||
-        				(token.getType() == JavaLexer.PROTECTED) ||
-        				(token.getType() == JavaLexer.PRIVATE)) {
-        		// RJ2: remove accessibility keyword
-        	} else if(	(token.getType() == JavaLexer.COMMENT) ||
-        				(token.getType() == JavaLexer.LINE_COMMENT)) {
-        		// Remove comment stuff.
-        	} else {
-        		// Other cases
-        		buf.append(token.getText());
-        		buf.append("");
-        	}
-        	token = lexer.nextToken();
-        }
-        return buf.toString();
 	}
 }
