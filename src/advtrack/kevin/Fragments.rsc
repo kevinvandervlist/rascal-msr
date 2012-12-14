@@ -214,6 +214,11 @@ list[set[int]] filterOut(list[int] indexing) {
 	list[set[int]] buffer = [{}];
 	set[int] buf = {};
 	
+	// Can't be done if the list is <= BLOCK_SIZE anyway, so just return
+	if(s <= BLOCK_SIZE) {
+		return buffer;
+	}
+	
 	for  (i <- [0..s-2]) {
 		if (indexing[i+1] - indexing[i] - 1 > GAP_SIZE) {  			
 			buffer += buf;
