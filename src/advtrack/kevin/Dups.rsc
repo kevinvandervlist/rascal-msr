@@ -129,7 +129,7 @@ private dupdict removeEmptyLines(dupdict dict) {
  
 
 public void main() {
-
+	println("Start @ <printTime(now(), "HH:mm:ss")>");
 	// Create a 'Connection' datatype.
 	con = fs(gitLoc);
 	
@@ -148,11 +148,13 @@ public void main() {
 	fileList = getByFileExtension(".java", fileList);
 	
 	cc = getCloneClasses(fileList);
+	println("getCloneClasses() @ <printTime(now(), "HH:mm:ss")>");
 	
 	list[CCCloneSections] sec = [];
 	
 	for (c <- cc) 
 		sec += [getCCCloneSections(c)];
 	
+	println("getCCCloneSections() @ <printTime(now(), "HH:mm:ss")>");
 	text(sec);
 }
