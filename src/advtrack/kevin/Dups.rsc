@@ -40,12 +40,13 @@ private dupdict createLineMap(list[loc] files) {
 		/*
 		 * Lex files to rewrite identifiers and remove comments and 
 		 * leading / trailing / intermediate whitespace.
+		 * The lexer is able to detect if and how to lex a file.
 		 */
 		lineList = lexFile(file);
-		//println("File: <file>, size: <size(lineList)>");
-		//for( l <- lineList) {
-		//	println(l);
-		//}
+		println("File: <file>, size: <size(lineList)>");
+		for( l <- lineList) {
+			println(l);
+		}
     	
 		int count = 0;
 		for(line <- lineList) {
@@ -121,7 +122,8 @@ public void main() {
 	m = cunit(branch("master"));
 	fileList = getFilesFromCheckoutUnit(m, repo);
 	
-	fileList = filterFilesByExtension(".java", fileList);
+	fileList = removeByFileExtension(".class", fileList);
+	//fileList = getByFileExtension(".java", fileList);
 	
 	cc = getCloneClasses(fileList);
 	

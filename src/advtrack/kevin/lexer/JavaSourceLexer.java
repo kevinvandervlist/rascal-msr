@@ -10,18 +10,18 @@ import org.eclipse.imp.pdb.facts.*;
 
 import advtrack.kevin.lexer.antlr.*;
 
-public class Lexer {
+public class JavaSourceLexer {
 	private final IValueFactory valueFactory;
 	
-	public Lexer(IValueFactory valueFactory) {
+	public JavaSourceLexer(IValueFactory valueFactory) {
 		this.valueFactory = valueFactory;
 	}
 	
-	public IString lexLine(IString rawline) {
+	public IString lexJavaLine(IString rawline) {
 		return this.valueFactory.string(lexer(rawline.getValue()));
 	}
 	
-	public IValue lexFile(ISourceLocation sloc) {
+	public IValue lexJavaFile(ISourceLocation sloc) {
 		CharStream cs = null;
 		List<String> list = null;
 		
@@ -40,7 +40,6 @@ public class Lexer {
 			Iterator<String> it = list.iterator();
 			
 			IList retl = this.valueFactory.list();
-			retl.append(this.valueFactory.string("WTF"));
 
 			while(it.hasNext()) {
 				IString cur = this.valueFactory.string(it.next());
@@ -156,6 +155,9 @@ public class Lexer {
         				(token.getType() == JavaLexer.PROTECTED) ||
         				(token.getType() == JavaLexer.PRIVATE)) {
         		// RJ2: remove accessibility keyword
+        	} else if(	(token.getType() == JavaLexer.COMMENT) ||
+        				(token.getType() == JavaLexer.LINE_COMMENT)) {
+        		// Remove comment stuff.
         	} else {
         		// Other cases
         		buf.append(token.getText());
