@@ -150,6 +150,7 @@ public void main() {
 	
 	cc = getCloneClasses(fileList);
 	println("getCloneClasses() @ <printTime(now(), "HH:mm:ss")>");
+	text(cc);
 	
 	list[CCCloneSections] sec = [];
 	
