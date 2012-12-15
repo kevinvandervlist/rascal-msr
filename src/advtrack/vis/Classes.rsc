@@ -6,7 +6,7 @@ import vis::Figure;
 import vis::Render;
 
 import advtrack::Datatypes;
-import advtrack::kevin::Dups;
+import advtrack::kevin::Detection::Dups;
 import advtrack::tests::testGenerator;
 
 

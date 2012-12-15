@@ -1,11 +1,11 @@
-module advtrack::kevin::Fragments
+module advtrack::kevin::Detection::Fragments
 
 import List;
 import Set;
 import util::Math;
 import util::ValueUI;
 
-import advtrack::kevin::Dups;
+import advtrack::kevin::Detection::Dups;
 import advtrack::Datatypes;
 import advtrack::Constants;
 

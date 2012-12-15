@@ -1,4 +1,4 @@
-module advtrack::kevin::Classes
+module advtrack::kevin::Detection::Classes
 
 import advtrack::Datatypes;
 import List;

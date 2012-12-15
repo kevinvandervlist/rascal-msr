@@ -1,4 +1,4 @@
-module advtrack::kevin::Dups
+module advtrack::kevin::Detection::Dups
 
 import List;
 import Map;
@@ -10,11 +10,11 @@ import resource::versions::git::Git;
 
 import advtrack::Constants;
 import advtrack::Datatypes;
-import advtrack::kevin::Classes;
+import advtrack::kevin::Detection::Classes;
+import advtrack::kevin::Detection::Fragments;
+import advtrack::kevin::Detection::Sections;
 import advtrack::kevin::Filenames;
-import advtrack::kevin::Fragments;
 import advtrack::kevin::Git;
-import advtrack::kevin::Sections;
 import advtrack::kevin::Util;
 import advtrack::kevin::lexer::Lexer;
 
@@ -131,7 +131,7 @@ private dupdict removeEmptyLines(dupdict dict) {
  * A test to see wether we can do something with history over time...
  */
 
-public void getCCCloneSectionsOverTime() {
+public list[Generation] getCCCloneSectionsOverTime() {
 	list[Generation] generations = [];
 	
 	con = fs(gitLoc);
@@ -144,7 +144,7 @@ public void getCCCloneSectionsOverTime() {
 	cu = getCheckoutUnits(revs);
 	
 	// Limit to last 3 revisions.
-	cu = tail(cu, 3);
+	//cu = tail(cu, 3);
 	
 	// Check out all the revisions in succesion...	
 	println("Starting analyzing <size(cu)> CheckoutUnits @ <printTime(now(), "HH:mm:ss")>");
@@ -176,9 +176,9 @@ public void getCCCloneSectionsOverTime() {
 	println("Done with <size(generations)> revisions @ <printTime(now(), "HH:mm:ss")>");
 	text(generations);
 	
-	loc wrt = |tmp:///generations_dump/|;
-	println("Dump written to <wrt>.");
-	writeGenerationsToFile(generations, wrt);
+	println("Dump written to <GENDUMP_LOC>.");
+	writeGenerationsToFile(generations, GENDUMP_LOC);
+	return generations;
 }
 
 public void main() {
