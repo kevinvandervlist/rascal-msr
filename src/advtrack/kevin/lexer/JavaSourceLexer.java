@@ -17,10 +17,6 @@ public class JavaSourceLexer {
 		this.valueFactory = valueFactory;
 	}
 	
-	public IString lexJavaLine(IString rawline) {
-		return this.valueFactory.string(lexer(rawline.getValue()));
-	}
-	
 	public IValue lexJavaFile(ISourceLocation sloc) {
 		CharStream cs = null;
 		List<String> list = null;
@@ -127,49 +123,5 @@ public class JavaSourceLexer {
        		// Other cases
 			return token.getText();
        	}
-	}
-
-	/**
-	 * This function takes a string from a Java source file, and then
-	 * lexes it according to the Java grammar.
-	 * Extra steps like rewriting can be included.
-	 * @param line A raw line from the source file being read. 
-	 * @return String A string containing just the lexed symbols.
-	 */
-	
-	public String lexer(String line) {
-		CharStream cs = new ANTLRStringStream(line);
-			
-		JavaLexer lexer = new JavaLexer(cs);
-			
-		CommonTokenStream tokens = new CommonTokenStream();
-		tokens.setTokenSource(lexer);
-		
-        StringBuffer buf = new StringBuffer();
-        
-        Token token = lexer.nextToken();
-        
-        while(token.getType() != JavaLexer.EOF) {
-        	// TODO: RJ2
-        	if(token.getType() == JavaLexer.IDENTIFIER) {
-        		// Parameter replacement:
-        		buf.append("$p ");
-        	} else if(token.getType() == JavaLexer.PACKAGE) {
-        		// RJ1: remove package names
-        	} else if (	(token.getType() == JavaLexer.PUBLIC) ||
-        				(token.getType() == JavaLexer.PROTECTED) ||
-        				(token.getType() == JavaLexer.PRIVATE)) {
-        		// RJ2: remove accessibility keyword
-        	} else if(	(token.getType() == JavaLexer.COMMENT) ||
-        				(token.getType() == JavaLexer.LINE_COMMENT)) {
-        		// Remove comment stuff.
-        	} else {
-        		// Other cases
-        		buf.append(token.getText());
-        		buf.append("");
-        	}
-        	token = lexer.nextToken();
-        }
-        return buf.toString();
 	}
 }
