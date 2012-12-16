@@ -120,7 +120,10 @@ public class JavaSourceLexer {
        				(token.getType() == JavaLexer.PRIVATE)) {
        		return "";
        		// RJ2: remove accessibility keyword
-       	} else {
+		} else if(	(token.getType() == JavaLexer.COMMENT) ||
+					(token.getType() == JavaLexer.LINE_COMMENT)) {
+			return "";
+		}else {
        		// Other cases
 			return token.getText();
        	}
