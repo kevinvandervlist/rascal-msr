@@ -22,8 +22,10 @@ import DateTime;
 import IO;
 import util::ValueUI;
 
-//str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
-str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
+str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
+//str gitLoc  = "/home/vladokom/workspace/uva/copy-rascal-msr/";
+
+//str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/argouml/";
 
@@ -51,10 +53,12 @@ private dupdict createLineMap(list[loc] files) {
 		if(exists(file)) {
 			lineList = lexFile(file);
 			
-			//println("File: <file>, size: <size(lineList)>");
-			//for( l <- lineList) {
-			//	println(l);
-			//}
+			/*
+			println("File: <file>, size: <size(lineList)>");
+			for( l <- lineList) {
+				println(l);
+			}
+			*/
 	    	
 			int count = 0;
 			
@@ -183,6 +187,8 @@ public list[Generation] getCCCloneSectionsOverTime() {
 
 public void main() {
 	println("Start @ <printTime(now(), "HH:mm:ss")>");
+	start_ = now();
+	
 	// Create a 'Connection' datatype.
 	con = fs(gitLoc);
 	
@@ -197,18 +203,21 @@ public void main() {
 	fileList = getFilesFromCheckoutUnit(m, repo);
 	
 	// Filter file extensions
-	//fileList = removeByFileExtension(".class", fileList);
 	fileList = getByFileExtension(".java", fileList);
-	
+
+	println("Git and file stuff done in <now() - start_>");
+	start_ = now();
+
 	cc = getCloneClasses(fileList);
-	println("getCloneClasses() @ <printTime(now(), "HH:mm:ss")>");
+	println("getCloneClasses() done in <now() - start_>");
 	text(cc);
 	
+	start_ = now();
 	list[CCCloneSections] sec = [];
 	
 	for (c <- cc) 
 		sec += [getCCCloneSections(c)];
 	
-	println("getCCCloneSections() @ <printTime(now(), "HH:mm:ss")>");
+	println("getCCCloneSections() done in <now() - start_>");
 	text(sec);
 }

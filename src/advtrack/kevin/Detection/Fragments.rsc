@@ -5,6 +5,8 @@ import Set;
 import util::Math;
 import util::ValueUI;
 
+import DateTime;
+
 import advtrack::kevin::Detection::Dups;
 import advtrack::Datatypes;
 import advtrack::Constants;
@@ -99,7 +101,9 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
  */
 public list[CFxy] matchFragments(list[CF] cl) {
 	// also match each fragment with itself to find duplication inside a single CF
+	datetime start_  = now();
 	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
+	println("Done <now() - start_/*, "HH:mm:ss:ms"*/>");
 
 	// get rid of the duplicate elements
 	list[CFxy] ret = [z | y <- x, z <- y, !isIdenticalCF(z.x, z.y)];
