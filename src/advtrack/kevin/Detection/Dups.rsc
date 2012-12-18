@@ -104,7 +104,7 @@ private dupdict removeEmptyLines(dupdict dict) {
 	occurences = stripSingles(dup_occurences);
 	
 	// Remove whitespace? By doing so, it is blazingly fast.
-	occurences = removeEmptyLines(dup_occurences);
+	occurences = removeEmptyLines(occurences);
 
 	// Create a list of code fragments for further analysis.
 	fragments = createCodeFragments(occurences);
