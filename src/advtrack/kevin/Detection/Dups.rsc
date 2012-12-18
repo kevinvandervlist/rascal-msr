@@ -23,7 +23,7 @@ import IO;
 import util::ValueUI;
 
 //str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
-str gitLoc  = "/home/vladokom/workspace/uva/copy-rascal-msr/";
+str gitLoc  = "/home/vladokom/workspace/uva/Yapo/";
 
 //str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
