@@ -11,9 +11,31 @@ import advtrack::tests::testGenerator;
 
 
 public void main() {
-    files = |file:///D:/Documenten/UvA/Architecture/HelloWorldGitDemo/src/demo|.ls;
+    files = |file:///home/jimi/Downloads/HelloWorldGitDemo/src/demo|.ls;
     ccs = getCloneClasses(files);
+    
+    cscale = colorScale([size(cc.fragments) | cc <- ccs], color("green"), color("red"));
+    render(
+        pack(
+            [
+                box(
+                    size(
+                        size(head(cc.fragments)) * 5,
+                        size(head(cc.fragments)) * 5
+                    ),
+                    fillColor(cscale(size(cc.fragments))),
+                    popup(
+                        "<size(head(cc.fragments))> lines\n" +
+                        "<size(cc.fragments)> clones"
+                    )
+                ) |
+                cc <- ccs
+            ],
+            std(gap(2))
+        )
+    );
 
+/*
 	render(
 		hcat([
 			outline(
@@ -32,4 +54,8 @@ public void main() {
 			file <- files
 		])
 	);
+*/
 }
+
+public FProperty popup(str S) =
+  mouseOver(box(text(S), fillColor("lightyellow"), grow(1.2),resizable(false)));
