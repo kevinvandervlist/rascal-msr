@@ -44,10 +44,6 @@ data CSxy = CSxy(set[CS] sections);
 //Pair of clone fragments within a given clone class (CC)
 data CFxy = CFxy(CF x, CF y);
 
-// Pair of clone fragments with alternative representation holding a set of two elements -
-// this way mirror elements will be discarded
-data CFxyComp = CFxyComp(set[CFComp] s);
-
 //Pair of pair of Clone Fragments (CFxy) and their clone sections (CSxy)
 data CFxyCSxy = CFxyCSxy(CFxy cf, CSxy cs);
 
@@ -148,14 +144,28 @@ public bool isIdenticalCFxy(CFxy a, CFxy b) {
 }
 
 //check if pair a contains subfragments of pair b
+public bool isSubCFxyComp(CFxy a, CFxy b) {
+	return ((isSubCFComp(toComp(a.x), toComp(b.x)) && isSubCFComp(toComp(a.y), toComp(b.y))) || 
+				   (isSubCFComp(toComp(a.y), toComp(b.x)) && isSubCFComp(toComp(a.x), toComp(b.y)))); 
+}
+
+
 public bool isSubCFxy(CFxy a, CFxy b) {
-	return ((isSubCF(toComp(a.x), toComp(b.x)) && isSubCF(toComp(a.y), toComp(b.y))) || 
-				   (isSubCF(toComp(a.y), toComp(b.x)) && isSubCF(toComp(a.x), toComp(b.y)))); 
+	if (!((isSubCF(a.x, b.x) && isSubCF(a.y, b.y)) ||
+			(isSubCF(a.y, b.x) && isSubCF(a.x, b.y)))) 
+		return false;
+	else 
+		return isSubCFxyComp(a, b);
+}
+
+
+public bool isSubCF(CF a, CF b) {
+	return a.lines <= b.lines;
 }
 
 
 //check if a is a subfragment of b 
-public bool isSubCF(CFComp a, CFComp b) {
+public bool isSubCFComp(CFComp a, CFComp b) {
 	return a.lines <= b.lines;
 }
 
@@ -166,16 +176,6 @@ public codelineComp toComp(codeline c) {
 
 public CFComp toComp(CF c) {
 	return CFComp(c.file, [toComp(z) | z <- c.lines]);
-}
-
-public CFxyComp toComp(CFxy c) {
-	return CFxyComp({toComp(c.x), toComp(c.y)});
-}
-
-public CFxy fromComp(CFxyComp c) {
-	<x, s> = takeOneFrom(c.s);
-	<y, s> = takeOneFrom(s);
-	return CFxy(fromComp(x), fromComp(y));
 }
 
 public CF fromComp(CFComp c) {

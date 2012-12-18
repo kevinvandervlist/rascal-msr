@@ -22,8 +22,8 @@ import DateTime;
 import IO;
 import util::ValueUI;
 
-str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
-//str gitLoc  = "/home/vladokom/workspace/uva/copy-rascal-msr/";
+//str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
+str gitLoc  = "/home/vladokom/workspace/uva/copy-rascal-msr/";
 
 //str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
@@ -104,7 +104,7 @@ private dupdict removeEmptyLines(dupdict dict) {
 	occurences = stripSingles(dup_occurences);
 	
 	// Remove whitespace? By doing so, it is blazingly fast.
-	occurences = removeEmptyLines(dup_occurences);
+	occurences = removeEmptyLines(occurences);
 
 	// Create a list of code fragments for further analysis.
 	fragments = createCodeFragments(occurences);

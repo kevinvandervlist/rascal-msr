@@ -103,7 +103,7 @@ public list[CFxy] matchFragments(list[CF] cl) {
 	// also match each fragment with itself to find duplication inside a single CF
 	datetime start_  = now();
 	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
-	println("Done <now() - start_/*, "HH:mm:ss:ms"*/>");
+	println("Matching pairs took <now() - start_/*, "HH:mm:ss:ms"*/>");
 
 	// get rid of the duplicate elements
 	list[CFxy] ret = [z | y <- x, z <- y, !isIdenticalCF(z.x, z.y)];
@@ -154,7 +154,6 @@ private list[CFxy] matchPair( CF a, CF b) {
 	// Some temporary buffer structures
 	list[set[int]] bufferA = [{}];
 	list[set[int]] bufferB = [{}];
-	list[CFxy] ret = [];
 
 	// Do this twice so all annotations are retained.
 	intersectionA = a.lines & b.lines;
@@ -162,7 +161,7 @@ private list[CFxy] matchPair( CF a, CF b) {
 	
 	// Early return to save time.
 	if (size(intersectionA) < BLOCK_SIZE) 
-		return ret;
+		return [];
 	
 	// Get all the indexes of items in the above intersection
 	indexingA = [x@linelocation.line | x <- intersectionA];
@@ -175,7 +174,7 @@ private list[CFxy] matchPair( CF a, CF b) {
 
 	// No remaining buffers means no possible match.		
 	if (size(bufferA) == 0 || size(bufferB) == 0)
-		return ret;
+		return [];
 	
 	// Of each remaining buffer, create a list of the remaining lines in them, 
 	// based on their location in the original list. 
@@ -183,19 +182,14 @@ private list[CFxy] matchPair( CF a, CF b) {
 	sectionsB = [  [getCodelineByLineNumber(b, g) |  g <- sort(toList(y))]  | y <-bufferB];
 	
 	// This is gruesomely expensive...
-	for(x <- sectionsA, 	y <- sectionsB) {
-		for ([_*, X*, _*] := x) { 
-			for([_*, Y*, _*] := y) {
-				if (X == Y && (size(X) >= BLOCK_SIZE)) {
-					rx = CF(head(X)@linelocation.file, X);
-					ry = CF(head(Y)@linelocation.file, Y);
-					ret += [CFxy(rx, ry)];
-				}
-			}
-		}
-	}
-	
-	return ret;
+	// NOTE: Use regular expression functionality in list pattern matching
+	return [CFxy(CF(head(X)@linelocation.file, X), 
+				 CF(head(Y)@linelocation.file, Y)) | x <- sectionsA,
+													 y <- sectionsB,
+													 [_*, X*, _*] := x,
+													 size(X) >= BLOCK_SIZE,
+													 [_*, Y*, _*] := y,
+													 X == Y ];			
 }
 
 
