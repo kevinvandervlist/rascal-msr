@@ -12,7 +12,7 @@ import advtrack::Datatypes;
 import advtrack::Constants;
 
 import IO;
-
+import ValueIO;
 
 alias dupdict = map[str line, set[location] locs];
 
@@ -102,20 +102,17 @@ public list[CFxy] matchFragments(list[CF] cl) {
 	// also match each fragment with itself to find duplication inside a single CF
 	return [z | y <- [matchPair(cla, clb) | cla <- cl, clb <- cl], z <- y];
 	
-	
 	/*
-	// i don't think we can read the list from a file later
-	// but you get the point
-	
-	for (cla <- cl, clb <- cl) 
-		for (y <- matchPair(cla, clb))
-			for (z <- y) {
-				appendToFile(|tmp:///pairs|, z); 
-				appendToFile(|tmp:///pairs|, "\n"); 
-			}
+	count = 0;
+	for (cla <- cl, clb <- cl) {
+		x = matchPair(cla, clb);
+		if (size(x) > 0) {
+			writeBinaryValueFile(|tmp:///pairs| + "<count>", x);
+			count += 1;
+		}
+	}	
+	return [];*/
 		
-	return [];
-	*/	
 }
 
 
