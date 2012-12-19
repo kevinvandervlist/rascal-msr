@@ -151,12 +151,18 @@ private list[CFxy] matchPair( CF a, CF b) {
 	// No remaining buffers means no possible match.		
 	if (size(bufferA) == 0 || size(bufferB) == 0)
 		return [];
+
+	// Test to improve new bottleneck:
+	// Can we just construct maps in a comprehension? We dont have to do set stuff then... 
+	// This deprecates getCodelineByLineNumber()
+	clMapA = toMap({ <k, x> | x <- a.lines, k := x@linelocation.line});
+	clMapB = toMap({ <k, x> | x <- b.lines, k := x@linelocation.line});
 	
 	// Of each remaining buffer, create a list of the remaining lines in them, 
 	// based on their location in the original list. 
-	sectionsA = [  [getCodelineByLineNumber(a, f) |  f <- sort(toList(x))]  | x <-bufferA];
-	sectionsB = [  [getCodelineByLineNumber(b, g) |  g <- sort(toList(y))]  | y <-bufferB];
-	
+	list[list[codeline]] sectionsA = [  [getOneFrom(clMapA[f]) |  f <- sort(toList(x))]  | x <-bufferA];
+	list[list[codeline]] sectionsB = [  [getOneFrom(clMapB[f]) |  f <- sort(toList(x))]  | x <-bufferB];
+			
 	// This is gruesomely expensive...
 	// NOTE: Use regular expression functionality in list pattern matching
 	subX = [X | x <- sectionsA, [_*, X*, _*] := x, size(X) >= BLOCK_SIZE];
