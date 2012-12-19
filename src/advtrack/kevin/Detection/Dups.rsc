@@ -29,6 +29,7 @@ str gitLoc  = "/home/jimi/Downloads/yapo/";
 //str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/argouml/";
+//str gitLoc = "/home/kevin/src/yapo/";
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.
