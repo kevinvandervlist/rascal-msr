@@ -101,6 +101,21 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
 public list[CFxy] matchFragments(list[CF] cl) {
 	// also match each fragment with itself to find duplication inside a single CF
 	return [z | y <- [matchPair(cla, clb) | cla <- cl, clb <- cl], z <- y];
+	
+	
+	/*
+	// i don't think we can read the list from a file later
+	// but you get the point
+	
+	for (cla <- cl, clb <- cl) 
+		for (y <- matchPair(cla, clb))
+			for (z <- y) {
+				appendToFile(|tmp:///pairs|, z); 
+				appendToFile(|tmp:///pairs|, "\n"); 
+			}
+		
+	return [];
+	*/	
 }
 
 
