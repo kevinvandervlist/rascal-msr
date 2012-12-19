@@ -58,6 +58,11 @@ data File = File(loc filelocation, list[str] lines);
 // CCCloneSections and CheckoutUnit
 data Generation = Generation(CheckoutUnit cu, list[CCCloneSections cccs]);
 
+
+//The evolution state between two codeblocks that make up a clone section
+data CSEvolutionClass = Consistent() | Inconsistent() | Unknown() | Removal();
+
+
 /**
  * Are two CFs equal?
  * Note: This compares the lines, not the codes. 
@@ -67,24 +72,8 @@ data Generation = Generation(CheckoutUnit cu, list[CCCloneSections cccs]);
  * @param b The second CF
  * @return Equal or not.
  */
-
 public bool isEqualCF(CF a, CF b) {
-	cla = a.lines;
-	clb = b.lines;
-	
-	// Are they of the same length?
-	if(size(cla) != size(clb)) {
-		return false;
-	}
-	
-	// Compare all the elements.
-	cmp = zip(cla, clb);
-	for(<l, r> <- cmp) {
-		if(l.line != r.line) {
-			return false;
-		}
-	}
-	return true;
+	return a.lines == b.lines;
 }
 
 
@@ -127,7 +116,7 @@ public bool isIdenticalCodelines(list[codeline] a, list[codeline] b) {
     return true;
 }
 
-
+// huh? Jimi, was that you?
 public CSxy getCSxyFromCCCSByCFxy(CCCloneSections cccs, CFxy cf) {
     for(cfcs <- cccs) {
         if(isIdenticalCFxy(cfcs.cf, cf)) return cfcs.cs;
