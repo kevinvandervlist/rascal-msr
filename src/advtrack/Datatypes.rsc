@@ -1,5 +1,6 @@
 module advtrack::Datatypes
 
+import IO;
 import List;
 import Set;
 
@@ -185,5 +186,16 @@ public CF fromComp(CFComp c) {
 
 public codeline fromComp(codelineComp c) {
 	return codeline(c.line)[@linelocation = c.linelocation];
+}
+
+public str toStr(CF cf) {
+    lines = readFileLines(cf.file);
+    return intercalate(
+        "\n",
+        [
+            "<l @ linelocation.line>: <lines[l @ linelocation.line]>" |
+            l <- cf.lines
+        ]
+    );
 }
 

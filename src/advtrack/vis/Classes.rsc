@@ -3,43 +3,27 @@ module advtrack::vis::Classes
 import IO;
 import List;
 import vis::Figure;
+import vis::KeySym;
 import vis::Render;
 
 import advtrack::Datatypes;
 import advtrack::kevin::Detection::Dups;
 import advtrack::tests::testGenerator;
 
+private list[loc] files;
+private list[CC] ccs;
+private Figure fig;
+
 
 public void main() {
     files = |file:///home/jimi/Downloads/HelloWorldGitDemo/src/demo|.ls;
     ccs = getCloneClasses(files);
     
-    fig = classes(ccs);
-    render(fig);
-
-/*
-	render(
-		hcat([
-			outline(
-				[
-					highlight(
-						l@linelocation.line,
-						l.line,
-						indexOf(ccs, getCC(cf, ccs))
-					) |
-					cf <- CFsWithLoc(file, ccs),
-					l <- cf.lines
-				],
-				size(readFileLines(file)),
-				size(20, size(readFileLines(file)))
-			) |
-			file <- files
-		])
-	);
-*/
+    fig = classes();
+    render(computeFigure(Figure() { return fig; }));
 }
 
-public Figure classes(list[CC] ccs) {
+public Figure classes() {
     cscale = colorScale(
         [size(cc.fragments) | cc <- ccs],
         color("green"),
@@ -50,14 +34,19 @@ public Figure classes(list[CC] ccs) {
         [
             box(
                 size(
-                    size(head(cc.fragments)) * 5,
-                    size(head(cc.fragments)) * 5
+                    size(head(cc.fragments).lines) * 5,
+                    size(head(cc.fragments).lines) * 5
                 ),
                 fillColor(cscale(size(cc.fragments))),
                 popup(
-                    "<size(head(cc.fragments))> lines\n" +
+                    "<size(head(cc.fragments).lines)> lines\n" +
                     "<size(cc.fragments)> clones"
-                )
+                ),
+                onMouseDown(bool (int butnr, map[KeyModifier, bool] modifiers) {
+                    //println("AA");
+                    fig = class(cc);
+                    return true;
+                })
             ) |
             cc <- ccs
         ],
@@ -65,7 +54,72 @@ public Figure classes(list[CC] ccs) {
     );
 }
 
+public Figure class(CC cc) =
+    vcat([
+        button(
+            "Back",
+            void() { 
+                fig = classes();
+                render(computeFigure(Figure() { return fig; })); 
+            },
+            height(20)
+        ),
+        text(head(cc.fragments).file.path),
+        hcat([
+            hscrollable(text(toStr(head(cc.fragments)), font("Monospaced")), width(400)),
+            hcat([
+                vcat([
+                    outline(
+                        [
+                            highlight(
+                                l@linelocation.line,
+                                l.line,
+                                4
+                            ) |
+                            cf <- cc.fragments,
+                            cf.file == file,
+                            l <- cf.lines
+                        ],
+                        size(readFileLines(file)),
+                        size(20, size(readFileLines(file)))
+                    ),
+                    text(file.path, textAngle(91))
+                ]) |
+                file <- files
+            ])
+        ])
+    ], std(top()), std(left()), std(resizable(false)), std(gap(5)));
+
 public FProperty popup(str S) =
     mouseOver(
         box(text(S), fillColor("lightyellow"), grow(1.2), resizable(false))
     );
+
+public FProperty classLink(CC cc) =
+    onMouseDown(bool(int butnr, map[KeyModifier, bool] modifiers) {
+        fig = class(cc);
+        return true;
+    });
+
+
+
+/*
+    render(
+        hcat([
+            outline(
+                [
+                    highlight(
+                        l@linelocation.line,
+                        l.line,
+                        indexOf(ccs, getCC(cf, ccs))
+                    ) |
+                    cf <- CFsWithLoc(file, ccs),
+                    l <- cf.lines
+                ],
+                size(readFileLines(file)),
+                size(20, size(readFileLines(file)))
+            ) |
+            file <- files
+        ])
+    );
+*/
