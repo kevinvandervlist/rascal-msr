@@ -105,6 +105,9 @@ public list[CFxy] matchFragments(list[CF] cl) {
 	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
 	println("Matching pairs took <now() - start_/*, "HH:mm:ss:ms"*/>");
 
+	println("SIZE OLD METHOD: <size(x)>");
+
+
 	// get rid of the duplicate elements
 	list[CFxy] ret = [z | y <- x, z <- y, !isIdenticalCF(z.x, z.y)];
 			
@@ -183,13 +186,33 @@ private list[CFxy] matchPair( CF a, CF b) {
 	
 	// This is gruesomely expensive...
 	// NOTE: Use regular expression functionality in list pattern matching
+	
+	subX = [X | x <- sectionsA, [_*, X*, _*] := x, size(X) >= BLOCK_SIZE];
+	subY = [X | y <- sectionsB, [_*, X*, _*] := y, size(X) >= BLOCK_SIZE];
+	commonX = subX & subY;
+	commonY = subY & subX;
+	
+	
+	
+	subCommonX = (lineloc : [s | s <- commonX, head(s)@linelocation == lineloc ] | [h,t*] <- commonX, lineloc := h@linelocation);
+	commonX = [head(sort(subCommonX[k], bool(list[codeline] a, list[codeline] b){ return size(a) >= size(b); })) | k <- subCommonX];
+	
+	subCommonY = (lineloc : [s | s <- commonY, head(s)@linelocation == lineloc ] | [h,t*] <- commonY, lineloc := h@linelocation);
+	commonY = [head(sort(subCommonY[k], bool(list[codeline] a, list[codeline] b){ return size(a) >= size(b); })) | k <- subCommonY];
+	
+	
+	
+	
 	return [CFxy(CF(head(X)@linelocation.file, X), 
-				 CF(head(Y)@linelocation.file, Y)) | x <- sectionsA,
-													 y <- sectionsB,
-													 [_*, X*, _*] := x,
-													 size(X) >= BLOCK_SIZE,
-													 [_*, Y*, _*] := y,
+				 CF(head(Y)@linelocation.file, Y)) | X <- commonX,
+													 Y <- commonY,
 													 X == Y ];			
+											
+			/*								
+	return [CFxy(CF(head(X)@linelocation.file, X), 
+				 CF(head(Y)@linelocation.file, Y)) | s <- common,
+				*/ 									 			
+	
 }
 
 

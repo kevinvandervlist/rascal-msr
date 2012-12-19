@@ -14,26 +14,8 @@ public void main() {
     files = |file:///home/jimi/Downloads/HelloWorldGitDemo/src/demo|.ls;
     ccs = getCloneClasses(files);
     
-    cscale = colorScale([size(cc.fragments) | cc <- ccs], color("green"), color("red"));
-    render(
-        pack(
-            [
-                box(
-                    size(
-                        size(head(cc.fragments)) * 5,
-                        size(head(cc.fragments)) * 5
-                    ),
-                    fillColor(cscale(size(cc.fragments))),
-                    popup(
-                        "<size(head(cc.fragments))> lines\n" +
-                        "<size(cc.fragments)> clones"
-                    )
-                ) |
-                cc <- ccs
-            ],
-            std(gap(2))
-        )
-    );
+    fig = classes(ccs);
+    render(fig);
 
 /*
 	render(
@@ -57,5 +39,33 @@ public void main() {
 */
 }
 
+public Figure classes(list[CC] ccs) {
+    cscale = colorScale(
+        [size(cc.fragments) | cc <- ccs],
+        color("green"),
+        color("red")
+    );
+
+    return pack(
+        [
+            box(
+                size(
+                    size(head(cc.fragments)) * 5,
+                    size(head(cc.fragments)) * 5
+                ),
+                fillColor(cscale(size(cc.fragments))),
+                popup(
+                    "<size(head(cc.fragments))> lines\n" +
+                    "<size(cc.fragments)> clones"
+                )
+            ) |
+            cc <- ccs
+        ],
+        std(gap(2))
+    );
+}
+
 public FProperty popup(str S) =
-  mouseOver(box(text(S), fillColor("lightyellow"), grow(1.2),resizable(false)));
+    mouseOver(
+        box(text(S), fillColor("lightyellow"), grow(1.2), resizable(false))
+    );
