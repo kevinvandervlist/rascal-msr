@@ -120,7 +120,9 @@ public class JavaSourceLexer {
 		} else if(	(token.getType() == JavaLexer.COMMENT) ||
 					(token.getType() == JavaLexer.LINE_COMMENT)) {
 			return "";
-		}else {
+		} else if(token.getType() == JavaLexer.IMPORT) {
+		    return "";
+		} else {
        		// Other cases
 			return token.getText();
        	}
