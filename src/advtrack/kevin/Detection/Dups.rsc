@@ -226,7 +226,7 @@ public void main() {
 	cc = getCloneClasses(fileList);
 	println("getCloneClasses() done in <now() - start_>");
 	//text(cc);
-	
+/*	
 	start_ = now();
 	list[CCCloneSections] sec = [];
 	
@@ -234,5 +234,5 @@ public void main() {
 		sec += [getCCCloneSections(c)];
 	
 	println("getCCCloneSections() done in <now() - start_>");
-	//text(sec);
+	//text(sec);*/
 }

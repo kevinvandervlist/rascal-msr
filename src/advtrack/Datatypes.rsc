@@ -72,24 +72,8 @@ data CSEvolutionClass = Consistent() | Inconsistent() | Unknown() | Removal();
  * @param b The second CF
  * @return Equal or not.
  */
-
 public bool isEqualCF(CF a, CF b) {
-	cla = a.lines;
-	clb = b.lines;
-	
-	// Are they of the same length?
-	if(size(cla) != size(clb)) {
-		return false;
-	}
-	
-	// Compare all the elements.
-	cmp = zip(cla, clb);
-	for(<l, r> <- cmp) {
-		if(l.line != r.line) {
-			return false;
-		}
-	}
-	return true;
+	return a.lines == b.lines;
 }
 
 
