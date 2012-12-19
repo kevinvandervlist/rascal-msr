@@ -2,13 +2,20 @@ module advtrack::vis::Classes
 
 import IO;
 import List;
+import util::Editors;
 import vis::Figure;
 import vis::KeySym;
 import vis::Render;
 
+import resource::versions::Versions;
+import resource::versions::git::Git;
+
 import advtrack::Datatypes;
 import advtrack::kevin::Detection::Dups;
+import advtrack::kevin::Filenames;
+import advtrack::kevin::Git;
 import advtrack::tests::testGenerator;
+
 
 private list[loc] files;
 private list[CC] ccs;
@@ -16,7 +23,24 @@ private Figure fig;
 
 
 public void main() {
-    files = |file:///home/jimi/Downloads/HelloWorldGitDemo/src/demo|.ls;
+    str gitLoc  = "/home/jimi/Downloads/yapo/";
+
+    con = fs(gitLoc);
+    
+    // Reverse so the oldest revision will be on top
+    set[LogOption] opt = {reverse()};
+    
+    // Create a 'Repository' datatype of the git Connection
+    repo = git(con, "", opt);
+    
+    // Get a list of files:
+    m = cunit(branch("master"));
+    fileList = getFilesFromCheckoutUnit(m, repo);
+    
+    // Filter file extensions
+    files = getByFileExtension(".java", fileList);
+    
+    
     ccs = getCloneClasses(files);
     
     fig = classes();
@@ -81,7 +105,8 @@ public Figure class(CC cc) =
                             l <- cf.lines
                         ],
                         size(readFileLines(file)),
-                        size(20, size(readFileLines(file)))
+                        size(20, size(readFileLines(file))),
+                        editor(file)
                     ),
                     text(file.path, textAngle(91))
                 ]) |
@@ -101,6 +126,14 @@ public FProperty classLink(CC cc) =
         return true;
     });
 
+public FProperty editor(loc l) =
+    onMouseDown(bool(int butnr, map[KeyModifier, bool] modifiers) {
+        println("Edidsd");
+        loc file = l(0, 0, <0, 0>, <8, 1>);
+        println("File: <file>");
+        edit(file, [warning(4, "Duplicated")]);
+        return true;
+    });
 
 
 /*
