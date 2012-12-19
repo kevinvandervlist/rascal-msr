@@ -23,8 +23,8 @@ import IO;
 import util::ValueUI;
 
 //str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
-//str gitLoc  = "/home/vladokom/workspace/uva/Yapo/";
-str gitLoc  = "/home/jimi/Downloads/yapo/";
+str gitLoc  = "/home/vladokom/workspace/uva/Yapo/";
+//str gitLoc  = "/home/jimi/Downloads/yapo/";
 
 //str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
@@ -59,8 +59,8 @@ private dupdict createLineMap(list[loc] files) {
 			println("File: <file>, size: <size(lineList)>");
 			for( l <- lineList) {
 				println(l);
-			}
-			*/
+			}*/
+			
 	    	
 			int count = 0;
 			

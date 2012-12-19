@@ -84,7 +84,8 @@ public class JavaSourceLexer {
         	}
         	
         	buf.append(applyRewriteRules(token));
-        	buf.append(" ");
+        	// Removing spaces for a little speedup
+        	//buf.append(" ");
         	
         	// Make sure to update the counters
         	curline = cl;
@@ -105,10 +106,10 @@ public class JavaSourceLexer {
 	 */
 	
 	private String applyRewriteRules(Token token) {
-       	if(token.getType() == JavaLexer.IDENTIFIER) {
+		/*if(token.getType() == JavaLexer.IDENTIFIER) {
        		// Parameter replacement:
        		return "$p";
-       	} else  if(token.getType() == JavaLexer.PACKAGE) {
+       	} else */ if(token.getType() == JavaLexer.PACKAGE) {
        		// RJ1: remove package names
        		return "";
        	} else if (	(token.getType() == JavaLexer.PUBLIC) ||

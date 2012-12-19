@@ -144,19 +144,20 @@ public bool isIdenticalCFxy(CFxy a, CFxy b) {
 	return (isIdenticalCF(a.x, b.x) && isIdenticalCF(a.y, b.y));
 }
 
-//check if pair a contains subfragments of pair b
-public bool isSubCFxyComp(CFxy a, CFxy b) {
-	return ((isSubCFComp(toComp(a.x), toComp(b.x)) && isSubCFComp(toComp(a.y), toComp(b.y))) || 
-				   (isSubCFComp(toComp(a.y), toComp(b.x)) && isSubCFComp(toComp(a.x), toComp(b.y)))); 
-}
 
 
 public bool isSubCFxy(CFxy a, CFxy b) {
 	if (!((isSubCF(a.x, b.x) && isSubCF(a.y, b.y)) ||
 			(isSubCF(a.y, b.x) && isSubCF(a.x, b.y)))) 
 		return false;
-	else 
-		return isSubCFxyComp(a, b);
+	
+	axComp = toComp(a.x);
+	ayComp = toComp(a.y);
+	bxComp = toComp(b.x);
+	byComp = toComp(b.y);
+	
+	return ((isSubCFComp(axComp, bxComp) && isSubCFComp(ayComp, byComp)) || 
+			(isSubCFComp(ayComp, bxComp) && isSubCFComp(axComp, byComp))); 
 }
 
 

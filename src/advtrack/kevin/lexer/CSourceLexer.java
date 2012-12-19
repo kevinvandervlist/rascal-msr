@@ -84,7 +84,8 @@ public class CSourceLexer {
         	}
         	
         	buf.append(applyRewriteRules(token));
-        	buf.append(" ");
+        	// Removing spaces for a little speedup
+        	//buf.append(" ");
         	
         	// Make sure to update the counters
         	curline = cl;
