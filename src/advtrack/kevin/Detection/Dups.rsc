@@ -24,13 +24,13 @@ import util::ValueUI;
 
 //str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
 //str gitLoc  = "/home/vladokom/workspace/uva/Yapo/";
-str gitLoc  = "/home/vladokom/workspace/uva/copy-rascal-msr/";
+//str gitLoc  = "/home/vladokom/workspace/uva/copy-rascal-msr/";
 //str gitLoc  = "/home/jimi/Downloads/yapo/";
 
 //str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/argouml/";
-//str gitLoc = "/home/kevin/src/yapo/";
+str gitLoc = "/home/kevin/src/yapo/";
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.
@@ -40,41 +40,21 @@ str gitLoc  = "/home/vladokom/workspace/uva/copy-rascal-msr/";
  */
 
 private dupdict createLineMap(list[loc] files) {
-	
-	rel[str, location] r = {};
-	
-	for(file <- files) {
-		/*
-		 * Lex files to rewrite identifiers and remove comments and 
-		 * leading / trailing / intermediate whitespace.
-		 * The lexer is able to detect if and how to lex a file.
-		 */
+	/*
+	 * Lex files to rewrite identifiers and remove comments and 
+	 * leading / trailing / intermediate whitespace.
+	 * The lexer is able to detect if and how to lex a file.
+	 */
 		
-		// Rascal apparantly has a bug with filenames with curlys in them or something.
-		if(exists(file)) {
-			lineList = lexFile(file);
-			
-			/*
-			println("File: <file>, size: <size(lineList)>");
-			for( l <- lineList) {
-				println(l);
-			}*/
-			
-	    	
-			int count = 0;
-			
-			for(line <- lineList) {
-				r += {<line, location(file, count)>};
-//				ret[line]?init += { location(file, count) };
-				count += 1;
-			}			
-		} else {
-			println("File <file> does not exist!");
-		}
-	}
-
+	// Rascal apparantly has a bug with filenames with curlys in them. 
+	// Or something in combination with git. Add exists() for now.
 	
-	return toMap(r);
+	rel_ = { <l[i], location(file, i)> | file <- files, 
+										 exists(file), 
+										 l := lexFile(file), 
+										 i <- [0..size(l) - 1] };
+		
+	return toMap(rel_);
 }
 
 /**
