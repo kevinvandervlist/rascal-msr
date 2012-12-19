@@ -57,6 +57,11 @@ data File = File(loc filelocation, list[str] lines);
 // CCCloneSections and CheckoutUnit
 data Generation = Generation(CheckoutUnit cu, list[CCCloneSections cccs]);
 
+
+//The evolution state between two codeblocks that make up a clone section
+data CSEvolutionClass = Consistent() | Inconsistent() | Unknown() | Removal();
+
+
 /**
  * Are two CFs equal?
  * Note: This compares the lines, not the codes. 
