@@ -23,11 +23,12 @@ import IO;
 import util::ValueUI;
 
 //str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
-str gitLoc  = "/home/vladokom/workspace/uva/Yapo/";
+//str gitLoc  = "/home/vladokom/workspace/uva/Yapo/";
 
 //str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/argouml/";
+str gitLoc = "/home/kevin/src/yapo/";
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.

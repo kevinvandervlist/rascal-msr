@@ -12,9 +12,20 @@ public void main() {
 	str a = "This is a string";
 	str b = "this is a string";
 	str c = "Today, the weather is nice.";
-	println("A :: B -\> <levensteinDistance(a, b)>");
-	println("A :: C -\> <levensteinDistance(a, c)>");
-	println("B :: C -\> <levensteinDistance(b, c)>");
+	println("A :: B -\> <levensteinDistance(a, b)>; NLD: <NLD(a, b)>");
+	println("A :: C -\> <levensteinDistance(a, c)>; NLD: <NLD(a, c)>");
+	println("B :: C -\> <levensteinDistance(b, c)>; NLD: <NLD(b, c)>");
+}
+
+public real NLD(str a, str b) {
+	return 1.0 - (toReal(levensteinDistance(a, b)) / maxLD(a, b));
+}
+
+private int maxLD(str a, str b) {
+	int al = size(a);
+	int bl = size(b);
+	println("<al>,<bl>");
+	return al > bl ? al : bl;  
 }
 
 /**

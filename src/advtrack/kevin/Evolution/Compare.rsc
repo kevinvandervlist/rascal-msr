@@ -8,14 +8,19 @@ import IO;
 import List;
 
 public void main() {
-	if(!exists(GENDUMP_LOC)) {
-		println("No dump found at <dump>. Try to run getCCCloneSectionsOverTime() from advtrack::kevin::Detection::Dups.");
+	loc f = GENDUMP_LOC;
+	if(!exists(f)) {
+		println("No dump found at <f>. ");
+		println("Try to run getCCCloneSectionsOverTime() from advtrack::kevin::Detection::Dups.");
 		return;
 	}
 	
 	list[Generation] gens = readGenerationsFromFile(GENDUMP_LOC);
 	
-	list[tuple[Generation x, Generation y] pair] genpairs = getGenerationTuples(gens);
+	list[tuple[Generation x, Generation y]] genpairs = getGenerationTuples(gens);
+	for(g <- genpairs) {
+		;
+	}
 }
 
 private list[tuple[Generation, Generation]] getGenerationTuples(list[Generation] gens) {
