@@ -30,7 +30,8 @@ import util::ValueUI;
 //str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/argouml/";
-str gitLoc = "/home/kevin/src/yapo/";
+//str gitLoc = "/home/kevin/src/yapo/";
+str gitLoc = "/home/kevin/src/rascal-msr-copy/";
 
 /**
  * Create a map (str line: {location}) where each line of each file is used as a key.
@@ -206,7 +207,7 @@ public void main() {
 	cc = getCloneClasses(fileList);
 	println("getCloneClasses() done in <now() - start_>");
 	//text(cc);
-/*	
+///*	
 	start_ = now();
 	list[CCCloneSections] sec = [];
 	
@@ -214,5 +215,5 @@ public void main() {
 		sec += [getCCCloneSections(c)];
 	
 	println("getCCCloneSections() done in <now() - start_>");
-	//text(sec);*/
+	//text(sec);//*/
 }

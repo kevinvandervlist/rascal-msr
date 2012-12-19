@@ -9,21 +9,15 @@ import IO;
 
 // return clone sections created from a single clone class
 public CCCloneSections getCCCloneSections(CC class) {
-	
-	CCCloneSections sections= [];
-	
 	assert (size(class.fragments) > 0);
 	
-	int s = size(class.fragments) -1 ;
+	int s = size(class.fragments) - 1;
 	
-	for (i <- [0..s]) {
-		for (j <- [0..s] && j!=i) {
-			CFxy current = CFxy(class.fragments[i], class.fragments[j]);
-			sections += [CFxyCSxy(current, getSections(current))];	
-		}
-	}
-
-	return sections;
+	return [ x | i <- [0..s], 
+				 j <- [0..s], 
+				 i != j, 
+				 cur := CFxy(class.fragments[i], class.fragments[j]), 
+				 x := CFxyCSxy(cur, getSections(cur))]; 
 }
 
 

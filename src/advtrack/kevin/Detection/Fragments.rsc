@@ -58,9 +58,8 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
 	list[CF] ret = [];
 	
 	// Does the list contain elements at all?
-	if(lst == []) {
+	if(lst == []) 
 		return ret;
-	}
 	
 	// Set the current file
 	location prev = head(lst).l;
@@ -101,8 +100,7 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
  */
 public list[CFxy] matchFragments(list[CF] cl) {
 	// also match each fragment with itself to find duplication inside a single CF
-	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
-	return [z | y <- x, z <- y];
+	return [z | y <- [matchPair(cla, clb) | cla <- cl, clb <- cl], z <- y];
 }
 
 
@@ -149,7 +147,6 @@ private list[CFxy] matchPair( CF a, CF b) {
 	
 	// This is gruesomely expensive...
 	// NOTE: Use regular expression functionality in list pattern matching
-	
 	subX = [X | x <- sectionsA, [_*, X*, _*] := x, size(X) >= BLOCK_SIZE];
 	subY = [X | y <- sectionsB, [_*, X*, _*] := y, size(X) >= BLOCK_SIZE];
 	commonX = subX & subY;
@@ -161,17 +158,13 @@ private list[CFxy] matchPair( CF a, CF b) {
 	subCommonY = (lineloc : [s | s <- commonY, head(s)@linelocation == lineloc ] | [h,t*] <- commonY, lineloc := h@linelocation);
 	commonY = [head(sort(subCommonY[k], bool(list[codeline] a, list[codeline] b){ return size(a) >= size(b); })) | k <- subCommonY];
 	
-	
 	commonX = [ x | x <- commonX, !largerExists(x, commonX)];
 	commonY = [ x | x <- commonY, !largerExists(x, commonY)];
-	
-	
 	
 	return [CFxy(CF(head(X)@linelocation.file, X), 
 				 CF(head(Y)@linelocation.file, Y)) | X <- commonX,
 													 Y <- commonY,
 													 isEqual(X, Y) ];			
-											
 }
 
 
@@ -192,23 +185,9 @@ private bool largerExists(list[codeline] x, list[list[codeline]] l) {
 	return false;
 }
 
-
-
-
-
 private codeline getCodelineByLineNumber(CF x, int l) {
-	r = [t | t <- x.lines, t@linelocation.line == l];
-	if( r == []) {
-		throw "L: <l> cannot be found in CF: \n<x>";
-	} else {
-		if(size(r) > 1)
-			throw "WTF: Multiple occurences found.";
-		return head(r);
-	}
+	return head([t | t <- x.lines, t@linelocation.line == l]);
 }
-
-
-
 
 // get all chunks that are within GAP_SIZE
 // and are bigger than BLOCK_SIZE

@@ -7,17 +7,14 @@ import IO;
 
 
 public list[CC] createCloneClasses(list[CFxy] fragmentPairs) {
-
     // check for empty set	
 	if (size(fragmentPairs) == 0)
 		return [];
-	
 
-	init = fragmentPairs [0];
+	init = fragmentPairs[0];
 	fragmentPairs = tail(fragmentPairs);
 		
 	list[CC] ret = [CC([init.x, init.y])];
-		
 
 	// for each pair test if it fits in a exising class, otherwise add a new class
 	for (fp <- fragmentPairs) {
