@@ -59,8 +59,8 @@ private dupdict createLineMap(list[loc] files) {
 			println("File: <file>, size: <size(lineList)>");
 			for( l <- lineList) {
 				println(l);
-			}
-			*/
+			}*/
+			
 	    	
 			int count = 0;
 			
