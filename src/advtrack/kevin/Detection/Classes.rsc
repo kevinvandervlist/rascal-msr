@@ -39,9 +39,9 @@ public list[CC] createCloneClasses(list[CFxy] fragmentPairs) {
 	for (i <- [0..s]) 
 		ret[i] = CC( [ fromComp(x) | x <- dup( [ toComp(y) |  y <- ret[i].fragments])]);
 	
-	println("sizes of the classes:");
-	for (c <- ret) 
-		println(size(c.fragments));
+	//println("sizes of the classes:");
+	//for (c <- ret) 
+	//	println(size(c.fragments));
 
 	return ret;
 }

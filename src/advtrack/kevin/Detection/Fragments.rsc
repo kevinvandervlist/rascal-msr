@@ -101,51 +101,8 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
  */
 public list[CFxy] matchFragments(list[CF] cl) {
 	// also match each fragment with itself to find duplication inside a single CF
-	datetime start_  = now();
 	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
-	println("Matching pairs took <now() - start_/*, "HH:mm:ss:ms"*/>");
-
-	list[CFxy] ret = [z | y <- x, z <- y];
-	
-				
-	// create a map (size : CFxy) to speed up the rest of the computation
-	map[int, list[CFxy]] sortedRet = ( );
-	list[CFxy] init = [];
-	for (z <- ret)
-		sortedRet[size(z.x.lines)]?init += [z];
-
-/*
-
-	for (s <- sortedRet) {
-		for (e <- sortedRet[s]) {
-			for (e1 <- sortedRet[s]) {
-				if (isMirrorCFxy(e, e1))
-					sortedRet[s] -= [e1];
-			}
-		}
-	}
-	
-	return	[e | s <- sortedRet, e <- sortedRet[s]];
-*/
-
-
-	// make a list of all pairs including the mirror elements
-	list[CFxy] retMirror = [e | s <- sortedRet, e <- sortedRet[s]];	
-	ret = [];
-	
-	// construct a return list without the mirror elements
-	for (z <- retMirror) {
-		bool found = false;
-		for (z1 <- ret && !found)
-			if (isMirrorCFxy(z, z1))
-				found = true;
-		if (!found)
-			ret += [z];
-	}
-
-	return ret;
-	
-	
+	return [z | y <- x, z <- y];
 }
 
 
