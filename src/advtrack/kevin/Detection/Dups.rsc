@@ -23,7 +23,8 @@ import IO;
 import util::ValueUI;
 
 //str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
-str gitLoc  = "/home/vladokom/workspace/uva/Yapo/";
+//str gitLoc  = "/home/vladokom/workspace/uva/Yapo/";
+str gitLoc  = "/home/jimi/Downloads/yapo/";
 
 //str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
@@ -148,7 +149,7 @@ public list[Generation] getCCCloneSectionsOverTime() {
 	cu = getCheckoutUnits(revs);
 	
 	// Limit to last 3 revisions.
-	//cu = tail(cu, 3);
+	cu = tail(cu, 3);
 	
 	// Check out all the revisions in succesion...	
 	println("Starting analyzing <size(cu)> CheckoutUnits @ <printTime(now(), "HH:mm:ss")>");
