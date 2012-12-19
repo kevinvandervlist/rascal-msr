@@ -101,42 +101,8 @@ public  list[CF] dropInvalidThreshold(list[tuple[location l, str s]] lst) {
  */
 public list[CFxy] matchFragments(list[CF] cl) {
 	// also match each fragment with itself to find duplication inside a single CF
-	datetime start_  = now();
 	list[list[CFxy]] x = [matchPair(cla, clb) | cla <- cl, clb <- cl];
-	println("Matching pairs took <now() - start_/*, "HH:mm:ss:ms"*/>");
-
-	// get rid of the duplicate elements
-	list[CFxy] ret = [z | y <- x, z <- y, !isIdenticalCF(z.x, z.y)];
-			
-	// create a map (size : CFxy) to speed up the rest of the computation
-	map[int, list[CFxy]] sortedRet = ( );
-	list[CFxy] init = [];
-	for (z <- ret)
-		sortedRet[size(z.x.lines)]?init += [z];
-
-	// remove elements already contained in other elements 
-	for (s <- sortedRet) 
-		for (k <- sortedRet && k < s) 
-			for (z <- sortedRet[s])
-				for (z1 <- sortedRet[k])
-					if (isSubCFxy(z1, z) && !isIdenticalCFxy(z1, z))
-						sortedRet[k] -= [z1];
-	
-	// make a list of all pairs including the mirror elements
-	list[CFxy] retMirror = [e | s <- sortedRet, e <- sortedRet[s]];	
-	ret = [];
-	
-	// construct a return list without the mirror elements
-	for (z <- retMirror) {
-		bool found = false;
-		for (z1 <- ret && !found)
-			if (isMirrorCFxy(z, z1))
-				found = true;
-		if (!found)
-			ret += [z];
-	}
-
-	return ret;
+	return [z | y <- x, z <- y];
 }
 
 
@@ -183,13 +149,47 @@ private list[CFxy] matchPair( CF a, CF b) {
 	
 	// This is gruesomely expensive...
 	// NOTE: Use regular expression functionality in list pattern matching
+	
+	subX = [X | x <- sectionsA, [_*, X*, _*] := x, size(X) >= BLOCK_SIZE];
+	subY = [X | y <- sectionsB, [_*, X*, _*] := y, size(X) >= BLOCK_SIZE];
+	commonX = subX & subY;
+	commonY = subY & subX;
+	
+	subCommonX = (lineloc : [s | s <- commonX, head(s)@linelocation == lineloc ] | [h,t*] <- commonX, lineloc := h@linelocation);
+	commonX = [head(sort(subCommonX[k], bool(list[codeline] a, list[codeline] b){ return size(a) >= size(b); })) | k <- subCommonX];
+		
+	subCommonY = (lineloc : [s | s <- commonY, head(s)@linelocation == lineloc ] | [h,t*] <- commonY, lineloc := h@linelocation);
+	commonY = [head(sort(subCommonY[k], bool(list[codeline] a, list[codeline] b){ return size(a) >= size(b); })) | k <- subCommonY];
+	
+	
+	commonX = [ x | x <- commonX, !largerExists(x, commonX)];
+	commonY = [ x | x <- commonY, !largerExists(x, commonY)];
+	
+	
+	
 	return [CFxy(CF(head(X)@linelocation.file, X), 
-				 CF(head(Y)@linelocation.file, Y)) | x <- sectionsA,
-													 y <- sectionsB,
-													 [_*, X*, _*] := x,
-													 size(X) >= BLOCK_SIZE,
-													 [_*, Y*, _*] := y,
-													 X == Y ];			
+				 CF(head(Y)@linelocation.file, Y)) | X <- commonX,
+													 Y <- commonY,
+													 isEqual(X, Y) ];			
+											
+}
+
+
+private bool isEqual(list[codeline] x, list[codeline] y) {
+	return (x == y && head(x)@linelocation != head(y)@linelocation);
+}
+
+
+
+private bool largerExists(list[codeline] x, list[list[codeline]] l) {
+	for (k <- l) {
+		if (k > x) {
+			if (head(k)@linelocation.line < head(x)@linelocation.line &&
+				last(k)@linelocation.line > last(x)@linelocation.line)
+				return true;	
+		}
+	}	
+	return false;
 }
 
 

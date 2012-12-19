@@ -24,7 +24,8 @@ import util::ValueUI;
 
 //str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
 //str gitLoc  = "/home/vladokom/workspace/uva/Yapo/";
-str gitLoc  = "/home/jimi/Downloads/yapo/";
+str gitLoc  = "/home/vladokom/workspace/uva/copy-rascal-msr/";
+//str gitLoc  = "/home/jimi/Downloads/yapo/";
 
 //str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
@@ -39,10 +40,8 @@ str gitLoc  = "/home/jimi/Downloads/yapo/";
  */
 
 private dupdict createLineMap(list[loc] files) {
-	dupdict ret = ();
 	
-	// Needed, see issue 32: https://github.com/cwi-swat/rascal/issues/32
-	set[location] init = {};
+	rel[str, location] r = {};
 	
 	for(file <- files) {
 		/*
@@ -59,13 +58,14 @@ private dupdict createLineMap(list[loc] files) {
 			println("File: <file>, size: <size(lineList)>");
 			for( l <- lineList) {
 				println(l);
-			}
-			*/
+			}*/
+			
 	    	
 			int count = 0;
 			
 			for(line <- lineList) {
-				ret[line]?init += { location(file, count) };
+				r += {<line, location(file, count)>};
+//				ret[line]?init += { location(file, count) };
 				count += 1;
 			}			
 		} else {
@@ -73,7 +73,8 @@ private dupdict createLineMap(list[loc] files) {
 		}
 	}
 
-	return ret;
+	
+	return toMap(r);
 }
 
 /**
@@ -99,20 +100,30 @@ private dupdict removeEmptyLines(dupdict dict) {
  */
  public list[CC] getCloneClasses(list[loc] fileList) {
  
+ 	start_ = now();
  	// Create a map with all duplicate occurences.
 	dup_occurences = createLineMap(fileList);
+	println("createLineMap <now() - start_>");
 	
 	// Filter the strings that occur only once.
+	start_ = now();
 	occurences = stripSingles(dup_occurences);
+	println("stripSingles <now() - start_>");
 	
 	// Remove whitespace? By doing so, it is blazingly fast.
+	start_ = now();
 	occurences = removeEmptyLines(occurences);
-
+	println("rmvEmptyLines <now() - start_>");
+	
 	// Create a list of code fragments for further analysis.
+	start_ = now();
 	fragments = createCodeFragments(occurences);
+	println("createFragments <now() - start_>");
 	
 	// Match fragments with each other to form clone classes
+	start_ = now();
 	fragmentPairs = matchFragments(fragments);
+	println("matchFragments <now() - start_>");
 		
 	/*
 	for (fp <- fragmentPairs) {
@@ -127,7 +138,9 @@ private dupdict removeEmptyLines(dupdict dict) {
 	*/
 	
 	// Create the clone classes from the mathed pairs
+	start_ = now();
 	cloneClasses = createCloneClasses(fragmentPairs);
+	println("createCloneClasses <now() - start_>");
 	
 	return cloneClasses;
  
@@ -212,7 +225,7 @@ public void main() {
 
 	cc = getCloneClasses(fileList);
 	println("getCloneClasses() done in <now() - start_>");
-	text(cc);
+	//text(cc);
 	
 	start_ = now();
 	list[CCCloneSections] sec = [];
@@ -221,5 +234,5 @@ public void main() {
 		sec += [getCCCloneSections(c)];
 	
 	println("getCCCloneSections() done in <now() - start_>");
-	text(sec);
+	//text(sec);
 }

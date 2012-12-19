@@ -6,19 +6,8 @@ import List;
 import Set;
 import IO;
 
-// data CC = CC(list[CF] fragments);
 
-//data CFxyCSxy = CFxyCSxy(CFxy cf, CSxy cs);
-
-// data CSxy = CSxy(set[CS] sections);
-
-// data CS = CS(codeblock x, codeblock y);
-
-// alias CCCloneSections = list[CFxyCSxy sections];
-
-// Example: given CF with codelines [1,2,3,6,7], then [1,2,3] and [6,7] are considered codeblocks
-// data codeblock = codeblock(list[codeline] lines, int begin);
-
+// return clone sections created from a single clone class
 public CCCloneSections getCCCloneSections(CC class) {
 	
 	CCCloneSections sections= [];
