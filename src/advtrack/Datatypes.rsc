@@ -188,3 +188,11 @@ public str toStr(CF cf) {
     );
 }
 
+public bool hasFragments(loc l, CC cc) {
+    for(cf <- cc.fragments)
+        if(cf.file == l)
+            return true;
+
+    return false;
+}
+
