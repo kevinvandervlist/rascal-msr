@@ -25,13 +25,13 @@ import util::ValueUI;
 //str gitLoc = "/home/vladokom/workspace/uva/HelloWorldGitDemo/";
 //str gitLoc  = "/home/vladokom/workspace/uva/Yapo/";
 //str gitLoc  = "/home/vladokom/workspace/uva/copy-rascal-msr/";
-str gitLoc  = "/home/vladokom/workspace/uva/argouml/";
+//str gitLoc  = "/home/vladokom/workspace/uva/argouml/";
 //str gitLoc  = "/home/jimi/Downloads/yapo/";
 
 //str gitLoc = "/home/kevin/src/HelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/CHelloWorldGitDemo/";
 //str gitLoc = "/home/kevin/src/argouml/";
-//str gitLoc = "/home/kevin/src/yapo/";
+str gitLoc = "/home/kevin/src/yapo/";
 //str gitLoc = "/home/kevin/src/rascal-msr-copy/";
 
 /**
@@ -54,8 +54,9 @@ private dupdict createLineMap(list[loc] files) {
 	rel_ = { <l[i], location(file, i)> | file <- files, 
 										 exists(file), 
 										 l := lexFile(file),
-										 size(l) > 0,
-										 i <- [0..size(l) - 1] };
+										 len := size(l),
+										 len > 0,
+										 i <- [0..len - 1] };
 		
 	return toMap(rel_);
 }
@@ -75,9 +76,9 @@ private dupdict stripSingles(dupdict dict) {
  */
 
 private dupdict removeEmptyLines(dupdict dict) {
-    return (key : dict[key] | key <- dict, /^\s*$/ !:= key);
+    //return (key : dict[key] | key <- dict, /^\s*$/ !:= key);
     //Faster, but less accurate:
-    //return (key : dict[key] | key <- dict, key != "");
+    return (key : dict[key] | key <- dict, key != "");
 }
 
 /**
