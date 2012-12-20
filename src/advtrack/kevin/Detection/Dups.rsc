@@ -53,7 +53,8 @@ private dupdict createLineMap(list[loc] files) {
 	
 	rel_ = { <l[i], location(file, i)> | file <- files, 
 										 exists(file), 
-										 l := lexFile(file), 
+										 l := lexFile(file),
+										 size(l) > 0,
 										 i <- [0..size(l) - 1] };
 		
 	return toMap(rel_);
@@ -74,7 +75,9 @@ private dupdict stripSingles(dupdict dict) {
  */
 
 private dupdict removeEmptyLines(dupdict dict) {
-	return (key : dict[key] | key <- dict, key != "");
+    return (key : dict[key] | key <- dict, /^\s*$/ !:= key);
+    //Faster, but less accurate:
+    //return (key : dict[key] | key <- dict, key != "");
 }
 
 /**
