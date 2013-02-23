@@ -27,7 +27,7 @@ private str message = "";
 
 public void main() {
     //str gitLoc  = "/home/jimi/CodeFabriek/ThirdSight/WebSight/app/";
-    str gitLoc = "/home/jimi/Downloads/yapo/";
+    str gitLoc = "/home/kevin/src/QL-R-kemi/src/";
     
     con = fs(gitLoc);
     
@@ -42,7 +42,8 @@ public void main() {
     fileList = getFilesFromCheckoutUnit(m, repo);
     
     // Filter file extensions
-    files = fileList;//getByFileExtension(".erb", fileList);
+    files = getByFileExtension(".rsc", fileList);
+    iprintln(files);
     
     
     ccs = getCloneClasses(files);
@@ -53,6 +54,16 @@ public void main() {
     fig = ccfig;
     render(computeFigure(Figure() { return fig; }));
 }
+
+public void visualizeCloneClasses(list[CC] cloneClasses) {
+  ccs = cloneClasses;
+
+  setHighlightColors([color("yellow"), color("black")]);
+  ccfig = classes();
+  fig = ccfig;
+
+  render(computeFigure(Figure() { return fig; }));
+} 
 
 public Color(&T <: num) cscale(list[CC] ccs) =
     colorScale(
