@@ -4,11 +4,11 @@ import IO;
 import List;
 import util::Math;
 
-private loc lipsumFile = |project://rascal-msr/lipsum|;
+private loc lipsumFile = |project://rascal-msr/data/lipsum|;
 private list[str] lipsum = readFileLines(lipsumFile);
 private int lipsumCounter = 0;
 
-private loc muspilFile = |project://rascal-msr/muspil|;
+private loc muspilFile = |project://rascal-msr/data/muspil|;
 private list[str] muspil = readFileLines(muspilFile);
 private int muspilCounter = 0;
 
