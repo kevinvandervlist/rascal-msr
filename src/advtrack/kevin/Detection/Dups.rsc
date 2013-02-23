@@ -5,17 +5,14 @@ import Map;
 import Set;
 import String;
 
-import resource::versions::Versions;
-import resource::versions::git::Git;
-
 import advtrack::Constants;
 import advtrack::Datatypes;
 import advtrack::kevin::Detection::Classes;
 import advtrack::kevin::Detection::Fragments;
 import advtrack::kevin::Detection::Sections;
 import advtrack::kevin::Filenames;
-import advtrack::kevin::Git;
-import advtrack::kevin::Util;
+//import advtrack::kevin::Git;
+//import advtrack::kevin::Util;
 import advtrack::kevin::lexer::Lexer;
 
 import DateTime;
@@ -135,7 +132,7 @@ private dupdict removeEmptyLines(dupdict dict) {
 /**
  * A test to see wether we can do something with history over time...
  */
-
+/*
 public list[Generation] getCCCloneSectionsOverTime() {
 	list[Generation] generations = [];
 	
@@ -185,6 +182,7 @@ public list[Generation] getCCCloneSectionsOverTime() {
 	writeGenerationsToFile(generations, GENDUMP_LOC);
 	return generations;
 }
+*/
 
 public void main() {
 	println("Start @ <printTime(now(), "HH:mm:ss")>");

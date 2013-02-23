@@ -7,13 +7,13 @@ import vis::Figure;
 import vis::KeySym;
 import vis::Render;
 
-import resource::versions::Versions;
-import resource::versions::git::Git;
+//import resource::versions::Versions;
+//import resource::versions::git::Git;
 
 import advtrack::Datatypes;
 import advtrack::kevin::Detection::Dups;
 import advtrack::kevin::Filenames;
-import advtrack::kevin::Git;
+//import advtrack::kevin::Git;
 import advtrack::tests::testGenerator;
 
 

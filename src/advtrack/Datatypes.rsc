@@ -4,9 +4,6 @@ import IO;
 import List;
 import Set;
 
-import resource::versions::Versions;
-import resource::versions::git::Git;
-
 // location of a line from a source file
 data location = location(loc file, int line);
 
@@ -53,15 +50,6 @@ alias CCCloneSections = list[CFxyCSxy sections];
 
 //a file
 data File = File(loc filelocation, list[str] lines);
-
-// Model that can be used to store data of revisions over time
-// CCCloneSections and CheckoutUnit
-data Generation = Generation(CheckoutUnit cu, list[CCCloneSections cccs]);
-
-
-//The evolution state between two codeblocks that make up a clone section
-data CSEvolutionClass = Consistent() | Inconsistent() | Unknown() | Removal();
-
 
 /**
  * Are two CFs equal?
