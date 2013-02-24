@@ -28,16 +28,16 @@ public bool randBool() =
   arbInt(2) == 0;
 
 public list[int] randListInt() =
-  [randInt() | i <- [0 .. randInt(255)]];
+  [randInt() | _ <- [0 .. randInt(255)]];
 
 public list[int] randListInt(int n) =
-  [randInt() | i <- [1 .. n]];
+  [randInt() | _ <- [0 .. n]];
 
 public list[int] randListInt(int n, int max) =
-  [randInt(max) | i <- [1 .. n]];
+  [randInt(max) | _ <- [0 .. n]];
 
 public list[int] randListInt(int n, int min, int max) =
-  [randInt(min, max) | i <- [1 .. n]];
+  [randInt(min, max) | _ <- [0 .. n]];
 
 public str randStr() =
   stringChars(randListInt(randInt(255), 32, 126));
