@@ -8,6 +8,8 @@ import Map;
 import tests::Lipsum;
 import util::Random;
 
+import util::ValueUI;
+
 public loc tmpFile = |tmp:///rascal/testFile|;
 
 public codeline toCodeline(str line, loc file, int linenumber) =
@@ -48,7 +50,7 @@ public list[codeblock] moveCodeblocks(list[codeblock] blocks, int n) =
 public list[codeblock] moveCodeblocksGapped(list[codeblock] blocks, int n) {
     newBlocks = [];
     offset = 0;
-    for(i <- [0 .. size(blocks) - 1]) {
+    for(i <- [0 .. size(blocks)]) {
         b = blocks[i];
         currGap = 0;
         if(i < size(blocks) - 1)
@@ -93,7 +95,7 @@ public CCCloneSections generateCCCS() {
         cfy = toCF(copy);
         assert size(cfx) + size(cfy) + 6 <= last(cfy.lines) @ linelocation.line - head(cfx.lines) @ linelocation.line + 1;
         
-        csxy = CSxy({ CS(orig[j], copy[j]) | j <- [0 .. size(orig) - 1] });
+        csxy = CSxy({ CS(orig[j], copy[j]) | j <- [0 .. (size(orig) - 1)] });
         cfxy = CFxy(cfx, cfy);
         cccs += CFxyCSxy(cfxy, csxy);
 
@@ -145,7 +147,7 @@ public CC generateCC(CCCloneSections cccs){
 alias Files =  map[loc, list[codeline]];
 
 Files sortFiles(Files files){
-	bool (&T a, &T b) sortFunc = bool(codeline a, codeline b){ return a@linelocation.line <= b@linelocation.line; }; 
+	bool (&T a, &T b) sortFunc = bool(codeline a, codeline b){ return a@linelocation.line < b@linelocation.line; }; 
 	return (key: sort(files[key], sortFunc) | key <- domain(files)); 
 }
 

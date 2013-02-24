@@ -21,8 +21,12 @@ public int randInt() =
 public int randInt(int max) =
   arbInt(max + 1);
 
-public int randInt(int min, int max) =
+public default int randInt(int min, int max) =
   min + arbInt(max - min + 1);
+  
+public int randInt(int min, int max) =
+  min + arbInt(max - min + 2)
+    when max == min;
 
 public bool randBool() =
   arbInt(2) == 0;

@@ -8,6 +8,7 @@ import analysis::Sections;
 import tests::TestGenerator;
 import util::Random;
 
+// Another off-by-one error, see TestCC.
 private bool testCCCS() {
     testcccs = generateCCCS();
     testccs = [generateCC(testcccs)];
@@ -15,8 +16,10 @@ private bool testCCCS() {
 
     ccs = getCloneClasses(testfiles);
 
-    if(size(ccs) > 1)
-        return false;
+    if(size(ccs) > 1) {
+      println("ccs \> 1");
+      return false;
+    }
     
     cccs = getCCCloneSections(ccs[0]);
 

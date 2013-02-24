@@ -141,10 +141,10 @@ private list[CFxy] matchPair( CF a, CF b) {
 	commonY = subY & subX;
 	
 	subCommonX = (lineloc : [s | s <- commonX, head(s)@linelocation == lineloc ] | [h,t*] <- commonX, lineloc := h@linelocation);
-	commonX = [head(sort(subCommonX[k], bool(list[codeline] a, list[codeline] b){ return size(a) >= size(b); })) | k <- subCommonX];
+	commonX = [head(sort(subCommonX[k], bool(list[codeline] a, list[codeline] b){ return size(a) > size(b); })) | k <- subCommonX];
 		
 	subCommonY = (lineloc : [s | s <- commonY, head(s)@linelocation == lineloc ] | [h,t*] <- commonY, lineloc := h@linelocation);
-	commonY = [head(sort(subCommonY[k], bool(list[codeline] a, list[codeline] b){ return size(a) >= size(b); })) | k <- subCommonY];
+	commonY = [head(sort(subCommonY[k], bool(list[codeline] a, list[codeline] b){ return size(a) > size(b); })) | k <- subCommonY];
 	
 	commonX = [ x | x <- commonX, !largerExists(x, commonX)];
 	commonY = [ x | x <- commonY, !largerExists(x, commonY)];
